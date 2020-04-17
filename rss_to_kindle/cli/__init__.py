@@ -5,7 +5,9 @@ from .subscription import subscription
 
 
 @click.group()
-@click.option("-v", "--verbose", is_flag=True, default=False, help="If set, will print DEBUG messages")
+@click.option(
+    "-v", "--verbose", is_flag=True, default=False, help="If set, will print DEBUG messages",
+)
 def main(verbose) -> None:
     """A tool to send items from RSS subscriptions to Kindle"""
     ctx = click.get_current_context()

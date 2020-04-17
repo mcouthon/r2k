@@ -1,7 +1,7 @@
 import click
 
-from .config_set import config_set
 from .config_init import config_init
+from .config_set import config_set
 from .config_show import config_show
 
 

@@ -1,8 +1,8 @@
 import sys
 from xml.etree import ElementTree
 
-import yaml
 import click
+import yaml
 
 from rss_to_kindle.cli import cli_utils, logger, unicode
 from rss_to_kindle.config import get_config
@@ -66,7 +66,7 @@ def convert_common_unicode_chars(string, char_map) -> str:
 
 
 def parse_ompl(path) -> ElementTree.ElementTree:
-    with open(path, "rt") as f:
+    with open(path) as f:
         try:
             return ElementTree.parse(f)
         except ElementTree.ParseError:

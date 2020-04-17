@@ -8,7 +8,7 @@ from .constants import CONFIG_ENV_VAR
 
 
 class Config:
-    DEFAULT_VALUES = {"subscriptions": {}}
+    DEFAULT_VALUES: dict = {"subscriptions": {}}
 
     def __init__(self, path) -> None:
         self._path = path

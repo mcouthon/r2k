@@ -1,8 +1,8 @@
 import click
 
 from .subscription_add import subscription_add
-from .subscription_remove import subscription_remove
 from .subscription_import import subscription_import
+from .subscription_remove import subscription_remove
 from .subscription_show import subscription_show
 
 

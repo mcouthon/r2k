@@ -1,5 +1,5 @@
-import yaml
 import click
+import yaml
 
 from rss_to_kindle.cli import cli_utils, logger
 from rss_to_kindle.config import get_config
