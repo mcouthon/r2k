@@ -1,7 +1,7 @@
 import click
 
 from .config import config
-from .subscription import subscription
+from .feed import feed
 
 
 @click.group()
@@ -9,13 +9,13 @@ from .subscription import subscription
     "-v", "--verbose", is_flag=True, default=False, help="If set, will print DEBUG messages",
 )
 def main(verbose: bool) -> None:
-    """A tool to send items from RSS subscriptions to Kindle"""
+    """A tool to send items from RSS feeds to Kindle"""
     ctx = click.get_current_context()
     setattr(ctx, "verbose", verbose)
 
 
 main.add_command(config)
-main.add_command(subscription)
+main.add_command(feed)
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ from .constants import CONFIG_ENV_VAR
 class Config:
     """Global configuration for the project"""
 
-    DEFAULT_VALUES: dict = {"subscriptions": {}}
+    DEFAULT_VALUES: dict = {"feeds": {}}
 
     def __init__(self, path: str) -> None:
         """Constructor"""

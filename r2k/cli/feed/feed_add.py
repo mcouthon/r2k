@@ -13,14 +13,14 @@ from r2k.config import Config, get_config
 
 @click.command("add")
 @cli_utils.config_path_option()
-@click.option("-t", "--title", type=str, required=True, help="The title of the subscription")
-@click.option("-u", "--url", type=str, required=True, help="The URL of the subscription")
-@cli_utils.force_option("If set will update existing subscriptions")
-def subscription_add(path: str, title: str, url: str, force: bool) -> None:
-    """Add an RSS subscription."""
+@click.option("-t", "--title", type=str, required=True, help="The title of the feed")
+@click.option("-u", "--url", type=str, required=True, help="The URL of the feed")
+@cli_utils.force_option("If set will update existing feeds")
+def feed_add(path: str, title: str, url: str, force: bool) -> None:
+    """Add an RSS feed."""
     config = get_config(path)
 
-    validate_existing_subscriptions(title, config, force)
+    validate_existing_feeds(title, config, force)
 
     feeds = get_feeds_from_url(url)
 
@@ -32,20 +32,19 @@ def subscription_add(path: str, title: str, url: str, force: bool) -> None:
     else:
         feed, _ = pick(feeds, "Please choose the correct feed from this list:")
 
-    config.subscriptions[title] = feed
+    config.feeds[title] = feed
     config.save()
-    logger.info("Successfully added the subscription!")
+    logger.info("Successfully added the feed!")
 
 
-def validate_existing_subscriptions(title: str, config: Config, force: bool) -> None:
-    """Error out if no force flag was passed and the subscription already exists"""
-    if title in config.subscriptions:
+def validate_existing_feeds(title: str, config: Config, force: bool) -> None:
+    """Error out if no force flag was passed and the feed already exists"""
+    if title in config.feeds:
         if force:
-            logger.confirm(f"Going to overwrite the following subscription: {title}")
+            logger.confirm(f"Going to overwrite the following feed: {title}")
         else:
             logger.error(
-                f"The following subscription already exists: {title}\n"
-                f"Pass the --force flag if you'd like to overwrite it"
+                f"The following feed already exists: {title}\n" f"Pass the --force flag if you'd like to overwrite it"
             )
             sys.exit(1)
 

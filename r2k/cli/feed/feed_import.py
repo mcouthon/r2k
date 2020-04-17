@@ -11,32 +11,32 @@ from r2k.config import Config, get_config
 @click.command("import")
 @cli_utils.config_path_option()
 @click.argument("opml-path", required=True, type=click.types.Path(exists=True))
-@cli_utils.force_option("If set will update existing subscriptions")
-def subscription_import(path: str, opml_path: str, force: bool) -> None:
-    """Import subscriptions from an OPML file."""
-    subscriptions = convert_opml_to_dict(opml_path)
+@cli_utils.force_option("If set will update existing feeds")
+def feed_import(path: str, opml_path: str, force: bool) -> None:
+    """Import feeds from an OPML file."""
+    feeds = convert_opml_to_dict(opml_path)
     config = get_config(path)
 
-    validate_conflicts(subscriptions, config, force)
+    validate_conflicts(feeds, config, force)
 
-    config.subscriptions.update(subscriptions)
+    config.feeds.update(feeds)
     config.save()
 
-    logger.info("Successfully imported the subscriptions!")
+    logger.info("Successfully imported the feeds!")
 
 
-def validate_conflicts(subscriptions: dict, config: Config, force: bool) -> None:
-    """Error out if the force flag was not passed and there are conflicts between new and existing subscriptions"""
-    new_subscriptions = set(subscriptions.keys())
-    old_subscriptions = set(config.subscriptions.keys())
-    conflicts = new_subscriptions & old_subscriptions
+def validate_conflicts(feeds: dict, config: Config, force: bool) -> None:
+    """Error out if the force flag was not passed and there are conflicts between new and existing feeds"""
+    new_feeds = set(feeds.keys())
+    old_feeds = set(config.feeds.keys())
+    conflicts = new_feeds & old_feeds
     if conflicts:
         conflicts_str = yaml.safe_dump(sorted(list(conflicts)))  # Just here to like nicer in the output
         if force:
-            logger.confirm(f"Going to overwrite the following subscriptions:\n{conflicts_str}")
+            logger.confirm(f"Going to overwrite the following feeds:\n{conflicts_str}")
         else:
             logger.error(
-                f"Found the following existing subscriptions:\n{conflicts_str}\n"
+                f"Found the following existing feeds:\n{conflicts_str}\n"
                 f"Pass the --force flag if you'd like to overwrite them."
             )
             sys.exit(1)
@@ -46,7 +46,7 @@ def convert_opml_to_dict(path: str) -> dict:
     """Convert an OPML file to a dictionary, for easier storing in the configuration YAML"""
     tree = parse_ompl(path)
     char_map = unicode.get_common_char_mapping()
-    subscriptions = {}
+    feeds = {}
     for node in tree.findall(".//outline"):
         # The `title` and `text` are usually identical
         title = node.attrib.get("title", node.attrib.get("text"))
@@ -65,8 +65,8 @@ def convert_opml_to_dict(path: str) -> dict:
             logger.debug(f"Unknown type for `{title}`: {rss_type}")
             continue
 
-        subscriptions[title] = url
-    return subscriptions
+        feeds[title] = url
+    return feeds
 
 
 def convert_common_unicode_chars(string: str, char_map: dict) -> str:
