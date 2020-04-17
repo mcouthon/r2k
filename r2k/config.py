@@ -22,7 +22,7 @@ class Config:
         if not os.path.exists(self._path):
             logger.warning(
                 f"Could not locate a configuration in the path {self._path}\n"
-                f"If you want to create a new configuration, run `rss-to-kindle init`.\n"
+                f"If you want to create a new configuration, run `r2k init`.\n"
                 f"If you already have a configuration file, pass it as an env var to `{CONFIG_ENV_VAR}`"
             )
 

@@ -1,8 +1,8 @@
 import click
 import yaml
 
-from rss_to_kindle.cli import cli_utils, logger
-from rss_to_kindle.config import get_config
+from r2k.cli import cli_utils, logger
+from r2k.config import get_config
 
 
 @click.command("show")
@@ -16,6 +16,4 @@ def subscription_show(path: str) -> None:
         logger.info("Here are the existing subscriptions:")
         logger.secho(subscriptions, fg="white", bold=False)
     else:
-        logger.info(
-            "There are no subscriptions available.\n" "Add more by running `rss-to-kindle subscriptions import/add`"
-        )
+        logger.info("There are no subscriptions available.\n" "Add more by running `r2k subscriptions import/add`")

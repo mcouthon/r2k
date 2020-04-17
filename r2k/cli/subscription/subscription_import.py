@@ -4,8 +4,8 @@ from xml.etree import ElementTree
 import click
 import yaml
 
-from rss_to_kindle.cli import cli_utils, logger, unicode
-from rss_to_kindle.config import Config, get_config
+from r2k.cli import cli_utils, logger, unicode
+from r2k.config import Config, get_config
 
 
 @click.command("import")

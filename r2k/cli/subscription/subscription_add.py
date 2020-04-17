@@ -7,8 +7,8 @@ import requests
 from bs4 import BeautifulSoup
 from pick import pick
 
-from rss_to_kindle.cli import cli_utils, logger
-from rss_to_kindle.config import Config, get_config
+from r2k.cli import cli_utils, logger
+from r2k.config import Config, get_config
 
 
 @click.command("add")

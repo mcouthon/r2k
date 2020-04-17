@@ -1,6 +1,5 @@
 DIST_PATH 		:= dist
-PACKAGE_NAME 	:= rss-to-kindle
-PACKAGE_DIR		:= rss_to_kindle
+PACKAGE_NAME 	:= r2k
 
 POETRY_BIN 		:= $(shell which poetry)
 PIPX_BIN 		:= $(shell which pipx)
@@ -8,7 +7,7 @@ PIPX_BIN 		:= $(shell which pipx)
 PACKAGE_VERSION := $(shell $(POETRY_BIN) version | cut -d' ' -f2)
 
 DIST_PACKAGE := $(DIST_PATH)/$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
-SRC_FILES := $(shell find rss_to_kindle -iname "*.py" -type f)
+SRC_FILES := $(shell find r2k -iname "*.py" -type f)
 
 POETRY_FILES := pyproject.toml poetry.lock
 
@@ -39,29 +38,29 @@ echo-version: $(POETRY_FILES)
 
 .PHONY: flake8
 flake8:
-	$(POETRY_BIN) run flake8 $(PACKAGE_DIR)/ tests/
+	$(POETRY_BIN) run flake8 $(PACKAGE_NAME)/ tests/
 
 .PHONY: mypy
 mypy:
-	$(POETRY_BIN) run mypy $(PACKAGE_DIR)
+	$(POETRY_BIN) run mypy $(PACKAGE_NAME)
 
 .PHONY: pydocstyle
 pydocstyle:
-	$(POETRY_BIN) run pydocstyle $(PACKAGE_DIR)/
+	$(POETRY_BIN) run pydocstyle $(PACKAGE_NAME)/
 
 .PHONY: lint
 lint: mypy flake8 pydocstyle
 
 .PHONY: format
 format:
-	$(POETRY_BIN) run isort --recursive $(PACKAGE_DIR)/ tests/
-	$(POETRY_BIN) run black $(PACKAGE_DIR)/ tests/
+	$(POETRY_BIN) run isort --recursive $(PACKAGE_NAME)/ tests/
+	$(POETRY_BIN) run black $(PACKAGE_NAME)/ tests/
 	$(POETRY_BIN) run pyupgrade --py3-plus --py36-plus --py37-plus --exit-zero-even-if-changed $(SRC_FILES)
 
 .PHONY: format-check
 format-check:
-	$(POETRY_BIN) run isort --recursive --check-only $(PACKAGE_DIR)/ tests/
-	$(POETRY_BIN) run black --check $(PACKAGE_DIR)/ tests/
+	$(POETRY_BIN) run isort --recursive --check-only $(PACKAGE_NAME)/ tests/
+	$(POETRY_BIN) run black --check $(PACKAGE_NAME)/ tests/
 	$(POETRY_BIN) run pyupgrade --py3-plus --py36-plus --py37-plus $(SRC_FILES)
 
 .PHONY: prepare

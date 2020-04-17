@@ -2,8 +2,8 @@ import sys
 
 import click
 
-from rss_to_kindle.cli import cli_utils, logger
-from rss_to_kindle.config import get_config
+from r2k.cli import cli_utils, logger
+from r2k.config import get_config
 
 
 @click.command("set")

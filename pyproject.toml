@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "rss-to-kindle"
+name = "r2k"
 version = "0.1.0"
 description = "A tool that lets you periodically send articles received from an RSS feed to your Kindle"
 authors = ["Pavel Brodsky <mcouthon@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.scripts]
-rss-to-kindle = "rss_to_kindle.cli:main"
+r2k = "r2k.cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.8"

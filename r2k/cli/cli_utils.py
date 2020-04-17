@@ -2,7 +2,7 @@ from typing import Callable
 
 import click
 
-from rss_to_kindle.constants import CONFIG_ENV_VAR, DEFAULT_CONFIG_PATH
+from r2k.constants import CONFIG_ENV_VAR, DEFAULT_CONFIG_PATH
 
 
 def config_path_option(exists: bool = True) -> Callable:
