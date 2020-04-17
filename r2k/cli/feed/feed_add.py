@@ -32,7 +32,7 @@ def feed_add(path: str, title: str, url: str, force: bool) -> None:
     else:
         feed, _ = pick(feeds, "Please choose the correct feed from this list:")
 
-    config.feeds[title] = feed
+    config.feeds[title] = {feed: {}}
     config.save()
     logger.info("Successfully added the feed!")
 

@@ -12,22 +12,22 @@ def secho(msg: Any, fg: str, bold: bool = True) -> None:
     click.echo(click.style(msg, fg=fg, bold=bold))
 
 
-def warning(msg: str) -> None:
+def warning(msg: Any) -> None:
     """click.echo in a yellow color"""
     secho(msg, "yellow")
 
 
-def error(msg: str) -> None:
+def error(msg: Any) -> None:
     """click.echo in a red color"""
     secho(msg, "red")
 
 
-def info(msg: str) -> None:
+def info(msg: Any) -> None:
     """click.echo in a blue color"""
     secho(msg, "blue")
 
 
-def debug(msg: str) -> None:
+def debug(msg: Any) -> None:
     """click.echo in a white color"""
     if is_verbose():
         secho(msg, "white", bold=False)

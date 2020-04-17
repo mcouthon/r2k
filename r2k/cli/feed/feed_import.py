@@ -1,4 +1,5 @@
 import sys
+from typing import Optional
 from xml.etree import ElementTree
 
 import click
@@ -48,25 +49,39 @@ def convert_opml_to_dict(path: str) -> dict:
     char_map = unicode.get_common_char_mapping()
     feeds = {}
     for node in tree.findall(".//outline"):
-        # The `title` and `text` are usually identical
-        title = node.attrib.get("title", node.attrib.get("text"))
-        if not title:
-            logger.debug("Could not find title for RSS feed")
-            continue
-        title = convert_common_unicode_chars(title, char_map)
-
-        url = node.attrib.get("xmlUrl")
-        if not url:
-            logger.debug(f"Could not find URL for `{title}`")
-            continue
-
-        rss_type = node.attrib.get("type")
-        if rss_type != "rss":
-            logger.debug(f"Unknown type for `{title}`: {rss_type}")
-            continue
-
-        feeds[title] = url
+        if title := get_title(node, char_map):
+            if url := get_url(node, title):
+                if is_rss(node, title):
+                    feeds[title] = {"url": url}
     return feeds
+
+
+def get_title(node: ElementTree.Element, char_map: dict) -> Optional[str]:
+    """Retrieve the feed's title from the XML element"""
+    # The `title` and `text` are usually identical
+    title = node.attrib.get("title", node.attrib.get("text"))
+    if title:
+        title = convert_common_unicode_chars(title, char_map)
+    else:
+        logger.debug("Could not find title for RSS feed")
+    return title
+
+
+def get_url(node: ElementTree.Element, title: str) -> Optional[str]:
+    """Retrieve the feed's URL from the XML element"""
+    url = node.attrib.get("xmlUrl")
+    if not url:
+        logger.debug(f"Could not find URL for `{title}`")
+    return url
+
+
+def is_rss(node: ElementTree.Element, title: str) -> bool:
+    """Return true if the element is indeed an RSS feed"""
+    rss_type = node.attrib.get("type")
+    if rss_type != "rss":
+        logger.debug(f"Unknown type for `{title}`: {rss_type}")
+        return False
+    return True
 
 
 def convert_common_unicode_chars(string: str, char_map: dict) -> str:
