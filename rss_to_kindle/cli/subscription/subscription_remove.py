@@ -7,7 +7,7 @@ from rss_to_kindle.config import get_config
 @click.command("remove")
 @cli_utils.config_path_option()
 @click.option("-t", "--title", type=str, required=True, help="The title of the subscription")
-def subscription_remove(path, title) -> None:
+def subscription_remove(path: str, title: str) -> None:
     """Remove a subscription from the config."""
     config = get_config(path)
 

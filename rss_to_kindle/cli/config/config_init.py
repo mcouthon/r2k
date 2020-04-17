@@ -10,7 +10,7 @@ from rss_to_kindle.config import get_config
 @click.command("init")
 @cli_utils.config_path_option(exists=False)
 @cli_utils.force_option("If set will override an existing configuration file (if it exists)")
-def config_init(path, force) -> None:
+def config_init(path: str, force: bool) -> None:
     """Initialize a new configuration files."""
     if os.path.exists(path):
         if force:

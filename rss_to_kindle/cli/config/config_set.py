@@ -10,9 +10,8 @@ from rss_to_kindle.config import get_config
 @click.argument("key")
 @cli_utils.config_path_option()
 @cli_utils.force_option("If set will override an existing value (if it exists)")
-def config_set(key, path, force) -> None:
+def config_set(key: str, path: str, force: bool) -> None:
     """Set a value in the config."""
-
     _config = get_config(path)
     if key in _config:
         if force:

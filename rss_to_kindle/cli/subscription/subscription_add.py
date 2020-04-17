@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from pick import pick
 
 from rss_to_kindle.cli import cli_utils, logger
-from rss_to_kindle.config import get_config
+from rss_to_kindle.config import Config, get_config
 
 
 @click.command("add")
@@ -16,7 +16,7 @@ from rss_to_kindle.config import get_config
 @click.option("-t", "--title", type=str, required=True, help="The title of the subscription")
 @click.option("-u", "--url", type=str, required=True, help="The URL of the subscription")
 @cli_utils.force_option("If set will update existing subscriptions")
-def subscription_add(path, title, url, force) -> None:
+def subscription_add(path: str, title: str, url: str, force: bool) -> None:
     """Add an RSS subscription."""
     config = get_config(path)
 
@@ -37,7 +37,8 @@ def subscription_add(path, title, url, force) -> None:
     logger.info("Successfully added the subscription!")
 
 
-def validate_existing_subscriptions(title, config, force) -> None:
+def validate_existing_subscriptions(title: str, config: Config, force: bool) -> None:
+    """Error out if no force flag was passed and the subscription already exists"""
     if title in config.subscriptions:
         if force:
             logger.confirm(f"Going to overwrite the following subscription: {title}")
@@ -49,8 +50,12 @@ def validate_existing_subscriptions(title, config, force) -> None:
             sys.exit(1)
 
 
-def get_feeds_from_url(url) -> list:
-    """ Adapted from: https://gist.github.com/alexmill/9bc634240531d81c3abe """
+def get_feeds_from_url(url: str) -> list:
+    """
+    Try to parse the URL and find any RSS feeds in the webpage
+
+    Adapted from: https://gist.github.com/alexmill/9bc634240531d81c3abe
+    """
     logger.info(f"Attempting to find RSS feeds from {url}...")
 
     # If the URL itself is a proper RSS feed, just return it
@@ -64,12 +69,14 @@ def get_feeds_from_url(url) -> list:
     return [url for url in set(possible_feeds) if is_rss_feed(url)]
 
 
-def get_html(url) -> BeautifulSoup:
+def get_html(url: str) -> BeautifulSoup:
+    """Parse the URL with bs4"""
     raw = requests.get(url).text
     return BeautifulSoup(raw, features="lxml")
 
 
-def get_feeds_from_links(html) -> list:
+def get_feeds_from_links(html: BeautifulSoup) -> list:
+    """Try to find RSS feeds from link elements in the webpage"""
     possible_feeds = []
 
     feed_urls = html.findAll("link", rel="alternate")
@@ -83,10 +90,13 @@ def get_feeds_from_links(html) -> list:
     return possible_feeds
 
 
-def get_feeds_from_atags(url, html) -> list:
+def get_feeds_from_atags(url: str, html: BeautifulSoup) -> list:
+    """Try to find RSS feeds from a tags in the webpage"""
     possible_feeds = []
 
     parsed_url = urllib.parse.urlparse(url)
+    if not (parsed_url.scheme and parsed_url.hostname):
+        return []
     base = parsed_url.scheme + "://" + parsed_url.hostname
     atags = html.findAll("a")
     for a in atags:
@@ -97,6 +107,7 @@ def get_feeds_from_atags(url, html) -> list:
     return possible_feeds
 
 
-def is_rss_feed(url) -> bool:
+def is_rss_feed(url: str) -> bool:
+    """Test whether the URL is a proper RSS feed"""
     f = feedparser.parse(url)
     return len(f.entries) > 0

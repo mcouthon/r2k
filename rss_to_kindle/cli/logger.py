@@ -1,39 +1,45 @@
+from typing import Any
+
 import click
 
 from .cli_utils import is_verbose
 
 
-def secho(msg, fg, bold=True, **styles):
+def secho(msg: Any, fg: str, bold: bool = True) -> None:
+    """Similar to click.secho"""
     if not isinstance(msg, str):
         msg = str(msg)
-    styles["bold"] = bold
-    return click.secho(msg, fg=fg, **styles)
+    click.echo(click.style(msg, fg=fg, bold=bold))
 
 
-def warning(msg, **styles):
-    secho(msg, "yellow", **styles)
+def warning(msg: str) -> None:
+    """click.echo in a yellow color"""
+    secho(msg, "yellow")
 
 
-def error(msg, **styles):
-    secho(msg, "red", **styles)
+def error(msg: str) -> None:
+    """click.echo in a red color"""
+    secho(msg, "red")
 
 
-def info(msg, **styles):
-    secho(msg, "blue", **styles)
+def info(msg: str) -> None:
+    """click.echo in a blue color"""
+    secho(msg, "blue")
 
 
-def debug(msg):
+def debug(msg: str) -> None:
+    """click.echo in a white color"""
     if is_verbose():
         secho(msg, "white", bold=False)
 
 
-def prompt(text, hide_input=False, fg="cyan", **styles):
-    styles["bold"] = True
-    text = click.style(text, fg=fg, **styles)
+def prompt(text: str, hide_input: bool = False, fg: str = "cyan") -> Any:
+    """Ask the user to enter a value, and return the result"""
+    text = click.style(text, fg=fg, bold=True)
     return click.prompt(text, hide_input=hide_input)
 
 
-def confirm(text, default=True, fg="cyan", **styles):
-    styles["bold"] = True
-    text = click.style(text, fg=fg, **styles)
+def confirm(text: str, default: bool = True, fg: str = "cyan") -> bool:
+    """Ask the user for confirmation and return the bool result"""
+    text = click.style(text, fg=fg, bold=True)
     return click.confirm(text, default=default)

@@ -7,7 +7,7 @@ from rss_to_kindle.config import get_config
 
 @click.command("show")
 @cli_utils.config_path_option()
-def subscription_show(path) -> None:
+def subscription_show(path: str) -> None:
     """List all existing RSS subscriptions"""
     config = get_config(path)
 

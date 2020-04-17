@@ -1,5 +1,5 @@
 import os
-from typing import Union
+from typing import Any, Iterator
 
 import yaml
 
@@ -8,13 +8,17 @@ from .constants import CONFIG_ENV_VAR
 
 
 class Config:
+    """Global configuration for the project"""
+
     DEFAULT_VALUES: dict = {"subscriptions": {}}
 
-    def __init__(self, path) -> None:
+    def __init__(self, path: str) -> None:
+        """Constructor"""
         self._path = path
         self._config = Config.DEFAULT_VALUES.copy()
 
     def load_config(self) -> None:
+        """Load configurations from a YAML file"""
         if not os.path.exists(self._path):
             logger.warning(
                 f"Could not locate a configuration in the path {self._path}\n"
@@ -27,7 +31,8 @@ class Config:
 
         self._config.update(file_config)
 
-    def __getattr__(self, item) -> Union[str, dict]:
+    def __getattr__(self, item: str) -> Any:
+        """Override in order to allow accessing attributes from internal dict"""
         # Allow for private arguments
         if item.startswith("_"):
             return super().__getattribute__(item)
@@ -36,7 +41,8 @@ class Config:
             return self._config[item]
         raise AttributeError(f"Could not find a `{item}` attribute in the config")
 
-    def __setattr__(self, key, value) -> None:
+    def __setattr__(self, key: str, value: Any) -> None:
+        """Override in order to allow setting attributes to internal dict"""
         # Allow for private arguments
         if key.startswith("_"):
             return super().__setattr__(key, value)
@@ -44,30 +50,37 @@ class Config:
         self._config[key] = value
         self.save()
 
-    def save(self):
+    def save(self) -> None:
+        """Dump the contents of the internal dict to file"""
         with open(self._path, "w") as f:
             yaml.safe_dump(self._config, f, default_flow_style=False)
 
     @property
     def send_to(self) -> str:
+        """Override in order to set the pushtokindle hostname"""
+        # TODO: Make configurable
         return f"{self.kindle_address}@pushtokindle.com"
 
     def as_dict(self) -> dict:
+        """Return the underlying dict"""
         return self._config
 
-    def reset(self, new_config) -> None:
+    def reset(self, new_config: dict) -> None:
+        """Set a new config instead of the existing one"""
         self._config = Config.DEFAULT_VALUES.copy()
         self._config.update(new_config)
         self.save()
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
+        """Iterate over the internal dict"""
         return self._config.__iter__()
 
 
 _config = None
 
 
-def get_config(path, load=True) -> Config:
+def get_config(path: str, load: bool = True) -> Config:
+    """Return an initialized Config object"""
     global _config
     if not _config:
         _config = Config(path)
