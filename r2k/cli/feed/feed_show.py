@@ -8,7 +8,7 @@ from r2k.config import get_config
 @click.command("show")
 @cli_utils.config_path_option()
 def feed_show(path: str) -> None:
-    """List all existing RSS feeds"""
+    """List all existing RSS feeds."""
     config = get_config(path)
 
     if config.feeds:
