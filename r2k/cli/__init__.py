@@ -2,6 +2,7 @@ import click
 
 from .config import config
 from .feed import feed
+from .kindle import kindle
 
 
 @click.group()
@@ -16,6 +17,7 @@ def main(verbose: bool) -> None:
 
 main.add_command(config)
 main.add_command(feed)
+main.add_command(kindle)
 
 
 if __name__ == "__main__":

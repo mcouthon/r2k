@@ -5,7 +5,7 @@ import sys
 import click
 
 from r2k.cli import cli_utils, logger
-from r2k.config import get_config
+from r2k.config import config
 
 
 @click.command("init")
@@ -16,13 +16,12 @@ def config_init(path: str, force: bool) -> None:
     create_config_dir_if_not_exists(path)
     validate_config_overwrite(path, force)
 
-    send_from = logger.prompt(f"Please provide your gmail email address")
-    password = logger.prompt(f"Please provide your gmail app password", hide_input=True)
-    kindle_address = logger.prompt(f"Please provide your free kindle address (e.g. my_kindle@kindle.com)")
+    send_from = logger.prompt("Please provide your gmail email address")
+    password = logger.prompt("Please provide your gmail app password", hide_input=True)
+    kindle_address = logger.prompt("Please provide your free kindle address (e.g. my_kindle@kindle.com)")
     if "@" in kindle_address:
         kindle_address = kindle_address.split("@")[0]
-    config_obj = get_config(path, load=False)
-    config_obj.reset({"send_from": send_from, "kindle_address": kindle_address, "password": password})
+    config.reset({"send_from": send_from, "kindle_address": kindle_address, "password": password})
     logger.info("Successfully set the configuration!")
 
 

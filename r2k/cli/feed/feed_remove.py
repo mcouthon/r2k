@@ -1,16 +1,14 @@
 import click
 
 from r2k.cli import cli_utils, logger
-from r2k.config import get_config
+from r2k.config import config
 
 
 @click.command("remove")
 @cli_utils.config_path_option()
 @click.option("-t", "--title", type=str, required=True, help="The title of the feed")
-def feed_remove(path: str, title: str) -> None:
+def feed_remove(title: str) -> None:
     """Remove a feed from the config."""
-    config = get_config(path)
-
     found = config.feeds.pop(title, False)
     config.save()
 

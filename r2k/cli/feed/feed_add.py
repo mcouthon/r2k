@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from pick import pick
 
 from r2k.cli import cli_utils, logger
-from r2k.config import Config, get_config
+from r2k.config import Config, config
 
 
 @click.command("add")
@@ -16,10 +16,8 @@ from r2k.config import Config, get_config
 @click.option("-t", "--title", type=str, required=True, help="The title of the feed")
 @click.option("-u", "--url", type=str, required=True, help="The URL of the feed")
 @cli_utils.force_option("If set will update existing feeds")
-def feed_add(path: str, title: str, url: str, force: bool) -> None:
+def feed_add(title: str, url: str, force: bool) -> None:
     """Add an RSS feed."""
-    config = get_config(path)
-
     validate_existing_feeds(title, config, force)
 
     feeds = get_feeds_from_url(url)

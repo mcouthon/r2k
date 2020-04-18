@@ -1,10 +1,8 @@
-import os
 from typing import Any, Iterator
 
 import yaml
 
 from .cli import logger
-from .constants import CONFIG_ENV_VAR
 
 
 class Config:
@@ -12,20 +10,16 @@ class Config:
 
     DEFAULT_VALUES: dict = {"feeds": {}}
 
-    def __init__(self, path: str) -> None:
+    def __init__(self) -> None:
         """Constructor"""
-        self._path = path
+        self._path = ""
         self._config = Config.DEFAULT_VALUES.copy()
 
-    def load_config(self) -> None:
+    def load(self, path: str) -> None:
         """Load configurations from a YAML file"""
-        if not os.path.exists(self._path):
-            logger.warning(
-                f"Could not locate a configuration in the path {self._path}\n"
-                f"If you want to create a new configuration, run `r2k init`.\n"
-                f"If you already have a configuration file, pass it as an env var to `{CONFIG_ENV_VAR}`"
-            )
+        self._path = path
 
+        logger.debug(f"Loading config from {self._path}")
         with open(self._path) as f:
             file_config = yaml.safe_load(f)
 
@@ -52,6 +46,9 @@ class Config:
 
     def save(self) -> None:
         """Dump the contents of the internal dict to file"""
+        if not self._path:
+            raise FileNotFoundError("Path not set in Config. Need to run config.load before running config.save")
+
         with open(self._path, "w") as f:
             yaml.safe_dump(self._config, f, default_flow_style=False)
 
@@ -76,14 +73,4 @@ class Config:
         return self._config.__iter__()
 
 
-_config = None
-
-
-def get_config(path: str, load: bool = True) -> Config:
-    """Return an initialized Config object"""
-    global _config
-    if not _config:
-        _config = Config(path)
-        if load:
-            _config.load_config()
-    return _config
+config = Config()

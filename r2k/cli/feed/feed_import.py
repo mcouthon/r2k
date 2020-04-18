@@ -6,19 +6,18 @@ import click
 import yaml
 
 from r2k.cli import cli_utils, logger, unicode
-from r2k.config import Config, get_config
+from r2k.config import config
 
 
 @click.command("import")
 @cli_utils.config_path_option()
 @click.argument("opml-path", required=True, type=click.types.Path(exists=True))
 @cli_utils.force_option("If set will update existing feeds")
-def feed_import(path: str, opml_path: str, force: bool) -> None:
+def feed_import(opml_path: str, force: bool) -> None:
     """Import feeds from an OPML file."""
     feeds = convert_opml_to_dict(opml_path)
-    config = get_config(path)
 
-    validate_conflicts(feeds, config, force)
+    validate_conflicts(feeds, force)
 
     config.feeds.update(feeds)
     config.save()
@@ -26,7 +25,7 @@ def feed_import(path: str, opml_path: str, force: bool) -> None:
     logger.info("Successfully imported the feeds!")
 
 
-def validate_conflicts(feeds: dict, config: Config, force: bool) -> None:
+def validate_conflicts(feeds: dict, force: bool) -> None:
     """Error out if the force flag was not passed and there are conflicts between new and existing feeds"""
     new_feeds = set(feeds.keys())
     old_feeds = set(config.feeds.keys())
