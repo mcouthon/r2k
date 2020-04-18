@@ -1,6 +1,5 @@
 import smtplib
 
-from r2k.cli import logger
 from r2k.config import config
 from r2k.unicode import strip_common_unicode_chars
 
@@ -19,11 +18,8 @@ Subject: {title}
 def send_webpage_to_kindle(title: str, url: str) -> None:
     """Send a webpage to Kindle"""
     title = strip_common_unicode_chars(title)
-    logger.debug(f"Sending `{title}`...")
     body = create_message(title, url)
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
         server.ehlo()
         server.login(config.send_from, config.password)
         server.sendmail(config.send_from, config.send_to, body)
-
-    logger.debug("Email successfully sent!")

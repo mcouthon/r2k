@@ -55,7 +55,8 @@ class Config:
     @property
     def send_to(self) -> str:
         """Override in order to set the pushtokindle hostname"""
-        # TODO: Make configurable
+        # TODO: Make configurable - consider services other than pushtokindle, as well as cleaning out the article
+        # using newspaper
         return f"{self.kindle_address}@pushtokindle.com"
 
     def as_dict(self) -> dict:

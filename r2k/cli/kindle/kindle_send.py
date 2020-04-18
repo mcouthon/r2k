@@ -5,8 +5,9 @@ from typing import List
 import click
 import feedparser
 
-from r2k.cli import cli_utils, email, logger
+from r2k.cli import cli_utils, logger
 from r2k.config import config
+from r2k.email import send_webpage_to_kindle
 from r2k.feeds import Feed
 
 
@@ -61,7 +62,9 @@ def send_updates(unread_articles: list, feed_title: str) -> None:
     """Iterate over `unread_articles`, and send each one to the kindle"""
     if unread_articles:
         for article in unread_articles:
-            email.send_webpage_to_kindle(article.title, article.link)
+            logger.info(f"Sending `{article.title}`...")
+            send_webpage_to_kindle(article.title, article.link)
+            logger.debug("Email successfully sent!")
 
         logger.info(f"Successfully sent {len(unread_articles)} articles from the `{feed_title}` feed!")
     else:
