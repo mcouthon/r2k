@@ -1,40 +1,63 @@
-import smtplib
+import sys
+from datetime import datetime
 
 import click
 
-from r2k.cli import cli_utils, logger
-from r2k.config import Config, get_config
+from r2k.cli import cli_utils, email, logger
+from r2k.config import config
+from r2k.dates import get_pretty_date_str
+from r2k.feeds import Feed
 
 
-@click.command("add")
+@click.command("send")
 @cli_utils.config_path_option()
 @click.option(
-    "-f", "--feed", type=str, required=False, help="Title of a (optional) feed. If not passed, all feeds will be sent"
+    "-f",
+    "--feed-title",
+    type=str,
+    required=False,
+    help="Title of a (optional) feed. If not passed, updates for all feeds will be sent",
 )
-def kindle_send(path: str, feed: str) -> None:
+def kindle_send(feed_title: str) -> None:
     """Send updates from one or all feeds."""
-    config = get_config(path)
-
-    logger.info(f"{config}{feed}")
-
-
-def create_message(config: Config, title: str, url: str) -> str:
-    """Generate an SMTP message"""
-    return f"""\
-From: {config.send_from}
-To: {", ".join([config.send_to, config.send_to])}
-Subject: {title}
-
-{url}
-"""
+    if feed_title:
+        send_articles_for_feed(feed_title)
+    else:
+        logger.info("Sending articles from all feeds...")
+        for feed_title in config.feeds:
+            send_articles_for_feed(feed_title)
 
 
-def send_webpage_to_kindle(config: Config, title: str, url: str) -> None:
-    """Send a webpage to Kindle"""
-    body = create_message(config, title, url)
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.ehlo()
-        server.login(config.send_from, config.password)
-        server.sendmail(config.send_from, config.sent_to, body)
+def send_articles_for_feed(feed_title: str) -> None:
+    """Find all the new/unread articles for a certain feed and send them to the user's kindle"""
+    logger.info(f"Getting articles from `{feed_title}`...")
 
-    logger.debug("Email successfully sent!")
+    local_feed = get_feed(feed_title)
+
+    rss_feed = Feed(local_feed["url"])
+    last_updated = local_feed.get("updated")
+    unread_articles = rss_feed.get_unread_articles(last_updated)
+
+    send_updates(unread_articles, feed_title)
+    local_feed["updated"] = get_pretty_date_str(datetime.now(), show_time=True)
+    config.save()
+
+
+def get_feed(feed_title: str) -> dict:
+    """Get the feed if it exists in the feeds dict, or exit with an error"""
+    feed = config.feeds.get(feed_title)
+    if not feed:
+        logger.error(f"Tried to fetch articles from an unknown feed `{feed_title}`")
+        sys.exit(1)
+    return feed
+
+
+def send_updates(unread_articles: list, feed_title: str) -> None:
+    """Iterate over `unread_articles`, and send each one to the kindle"""
+    if unread_articles:
+        for article in unread_articles:
+            email.send_webpage_to_kindle(article.title, article.link)
+
+        logger.info(f"Successfully sent {len(unread_articles)} articles from the `{feed_title}` feed!")
+    else:
+        logger.info(f"No new content for `{feed_title}`")
