@@ -5,7 +5,6 @@ import click
 
 from r2k.cli import cli_utils, email, logger
 from r2k.config import config
-from r2k.dates import get_pretty_date_str
 from r2k.feeds import Feed
 
 
@@ -39,7 +38,7 @@ def send_articles_for_feed(feed_title: str) -> None:
     unread_articles = rss_feed.get_unread_articles(last_updated)
 
     send_updates(unread_articles, feed_title)
-    local_feed["updated"] = get_pretty_date_str(datetime.now(), show_time=True)
+    local_feed["updated"] = str(datetime.now().astimezone())
     config.save()
 
 

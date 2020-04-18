@@ -5,8 +5,9 @@ from xml.etree import ElementTree
 import click
 import yaml
 
-from r2k.cli import cli_utils, logger, unicode
+from r2k.cli import cli_utils, logger
 from r2k.config import config
+from r2k.unicode import strip_common_unicode_chars
 
 
 @click.command("import")
@@ -45,22 +46,21 @@ def validate_conflicts(feeds: dict, force: bool) -> None:
 def convert_opml_to_dict(path: str) -> dict:
     """Convert an OPML file to a dictionary, for easier storing in the configuration YAML"""
     tree = parse_ompl(path)
-    char_map = unicode.get_common_char_mapping()
     feeds = {}
     for node in tree.findall(".//outline"):
-        if title := get_title(node, char_map):
+        if title := get_title(node):
             if url := get_url(node, title):
                 if is_rss(node, title):
                     feeds[title] = {"url": url}
     return feeds
 
 
-def get_title(node: ElementTree.Element, char_map: dict) -> Optional[str]:
+def get_title(node: ElementTree.Element) -> Optional[str]:
     """Retrieve the feed's title from the XML element"""
     # The `title` and `text` are usually identical
     title = node.attrib.get("title", node.attrib.get("text"))
     if title:
-        title = convert_common_unicode_chars(title, char_map)
+        title = strip_common_unicode_chars(title)
     else:
         logger.debug("Could not find title for RSS feed")
     return title
@@ -81,14 +81,6 @@ def is_rss(node: ElementTree.Element, title: str) -> bool:
         logger.debug(f"Unknown type for `{title}`: {rss_type}")
         return False
     return True
-
-
-def convert_common_unicode_chars(string: str, char_map: dict) -> str:
-    """Replace common unicode characters with comparable ASCII values"""
-    for char, replacement in char_map.items():
-        if char in string:
-            string = string.replace(char, replacement)
-    return string
 
 
 def parse_ompl(path: str) -> ElementTree.ElementTree:
