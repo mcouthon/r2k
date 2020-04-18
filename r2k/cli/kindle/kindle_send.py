@@ -1,7 +1,9 @@
 import sys
 from datetime import datetime
+from typing import List
 
 import click
+import feedparser
 
 from r2k.cli import cli_utils, email, logger
 from r2k.config import config
@@ -31,18 +33,22 @@ def send_articles_for_feed(feed_title: str) -> None:
     """Find all the new/unread articles for a certain feed and send them to the user's kindle"""
     logger.info(f"Getting articles from `{feed_title}`...")
 
-    local_feed = get_feed(feed_title)
-
-    rss_feed = Feed(local_feed["url"])
-    last_updated = local_feed.get("updated")
-    unread_articles = rss_feed.get_unread_articles(last_updated)
+    local_feed = get_local_feed(feed_title)
+    unread_articles = get_unread_articles_for_feed(local_feed)
 
     send_updates(unread_articles, feed_title)
     local_feed["updated"] = str(datetime.now().astimezone())
     config.save()
 
 
-def get_feed(feed_title: str) -> dict:
+def get_unread_articles_for_feed(local_feed: dict) -> List[feedparser.FeedParserDict]:
+    """Find the all new articles for a certain feed"""
+    rss_feed = Feed(local_feed["url"])
+    last_updated = local_feed.get("updated")
+    return rss_feed.get_unread_articles(last_updated)
+
+
+def get_local_feed(feed_title: str) -> dict:
     """Get the feed if it exists in the feeds dict, or exit with an error"""
     feed = config.feeds.get(feed_title)
     if not feed:
