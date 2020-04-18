@@ -16,9 +16,7 @@ click = "^7.1.1"
 pyyaml = "^5.3.1"
 beautifulsoup4 = "^4.9.0"
 pick = "^0.6.7"
-
-# Make it optional, as it's a really heavy package
-newspaper3k = { version = "^0.2.8", optional = true }
+docker = "^4.2.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.2.0"
