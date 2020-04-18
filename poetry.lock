@@ -68,7 +68,7 @@ d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
 name = "certifi"
-optional = false
+optional = true
 python-versions = "*"
 version = "2020.4.5.1"
 
@@ -84,7 +84,7 @@ version = "3.1.0"
 category = "main"
 description = "Universal encoding detector for Python 2 and 3"
 name = "chardet"
-optional = false
+optional = true
 python-versions = "*"
 version = "3.0.4"
 
@@ -117,7 +117,7 @@ version = "0.3.0"
 category = "main"
 description = "A Python library for the Docker Engine API."
 name = "docker"
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "4.2.0"
 
@@ -167,7 +167,6 @@ pyflakes = ">=2.2.0,<2.3.0"
 reference = "6efb15cecb5a53e4f605cb0639ddd7f6f33c4a41"
 type = "git"
 url = "https://gitlab.com/pycqa/flake8.git"
-
 [[package]]
 category = "dev"
 description = "File identification library for Python"
@@ -183,7 +182,7 @@ license = ["editdistance"]
 category = "main"
 description = "Internationalized Domain Names in Applications (IDNA)"
 name = "idna"
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "2.9"
 
@@ -324,7 +323,6 @@ version = "2.5.0"
 reference = "29f19d01db21d2245a579f8f3557592260505393"
 type = "git"
 url = "git@github.com:PyCQA/pycodestyle.git"
-
 [[package]]
 category = "dev"
 description = "Python docstring style checker"
@@ -357,7 +355,7 @@ category = "main"
 description = ""
 marker = "sys_platform == \"win32\" and python_version >= \"3.6\""
 name = "pypiwin32"
-optional = false
+optional = true
 python-versions = "*"
 version = "223"
 
@@ -402,7 +400,7 @@ category = "main"
 description = "Python for Window Extensions"
 marker = "sys_platform == \"win32\" and python_version >= \"3.6\""
 name = "pywin32"
-optional = false
+optional = true
 python-versions = "*"
 version = "227"
 
@@ -426,7 +424,7 @@ version = "2020.4.4"
 category = "main"
 description = "Python HTTP for Humans."
 name = "requests"
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "2.23.0"
 
@@ -500,7 +498,7 @@ version = "3.7.4.2"
 category = "main"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 name = "urllib3"
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 version = "1.25.9"
 
@@ -539,7 +537,7 @@ version = "0.1.9"
 category = "main"
 description = "WebSocket client for Python. hybi13 is supported."
 name = "websocket-client"
-optional = false
+optional = true
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "0.57.0"
 
@@ -547,10 +545,10 @@ version = "0.57.0"
 six = "*"
 
 [extras]
-newspaper = []
+docker = ["docker"]
 
 [metadata]
-content-hash = "5d9e1b679c706ac38d19144e4a8395bcb4688798bb04c34aa996dafb4d342038"
+content-hash = "dc826981d0a6a06320d6b765a17144656cb2986be29ad52a7290c57c43497efa"
 python-versions = "^3.8"
 
 [metadata.files]
