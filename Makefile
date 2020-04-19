@@ -70,13 +70,8 @@ install: pyproject.toml
 pipx-install: $(DIST_PACKAGE)
 	$(PIPX_BIN) install $<
 
-update: $(POETRY_FILES)
-	$(POETRY_BIN) update
-
-$(DIST_PACKAGE): $(POETRY_FILES) $(SRC_FILES)
-	$(POETRY_BIN) build --format sdist
-
-build: $(DIST_PACKAGE)
+build:
+	$(POETRY_BIN) build
 
 setup: clean install build pipx-install
 
