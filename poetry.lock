@@ -167,6 +167,7 @@ pyflakes = ">=2.2.0,<2.3.0"
 reference = "6efb15cecb5a53e4f605cb0639ddd7f6f33c4a41"
 type = "git"
 url = "https://gitlab.com/pycqa/flake8.git"
+
 [[package]]
 category = "dev"
 description = "File identification library for Python"
@@ -323,6 +324,7 @@ version = "2.5.0"
 reference = "29f19d01db21d2245a579f8f3557592260505393"
 type = "git"
 url = "git@github.com:PyCQA/pycodestyle.git"
+
 [[package]]
 category = "dev"
 description = "Python docstring style checker"
@@ -383,6 +385,17 @@ wcwidth = "*"
 [package.extras]
 checkqa-mypy = ["mypy (v0.761)"]
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
+
+[[package]]
+category = "main"
+description = "Extensions to the standard Python datetime module"
+name = "python-dateutil"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
+version = "2.8.1"
+
+[package.dependencies]
+six = ">=1.5"
 
 [[package]]
 category = "dev"
@@ -548,7 +561,7 @@ six = "*"
 docker = ["docker"]
 
 [metadata]
-content-hash = "dc826981d0a6a06320d6b765a17144656cb2986be29ad52a7290c57c43497efa"
+content-hash = "0ab4dc39b967af709f0b8c07de8d74d5ce01477fe1198765bbdebf69da8906c3"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -697,6 +710,10 @@ pypiwin32 = [
 pytest = [
     {file = "pytest-5.4.1-py3-none-any.whl", hash = "sha256:0e5b30f5cb04e887b91b1ee519fa3d89049595f428c1db76e73bd7f17b09b172"},
     {file = "pytest-5.4.1.tar.gz", hash = "sha256:84dde37075b8805f3d1f392cc47e38a0e59518fb46a431cfdaf7cf1ce805f970"},
+]
+python-dateutil = [
+    {file = "python-dateutil-2.8.1.tar.gz", hash = "sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c"},
+    {file = "python_dateutil-2.8.1-py2.py3-none-any.whl", hash = "sha256:75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"},
 ]
 pyupgrade = [
     {file = "pyupgrade-2.2.0-py2.py3-none-any.whl", hash = "sha256:5251b7237ece50df38b2eaf138a1532a365c15ee8732e6bbb74e0f21225f285d"},
