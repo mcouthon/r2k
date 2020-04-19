@@ -7,7 +7,7 @@ import feedparser
 
 from r2k.cli import cli_utils, logger
 from r2k.config import config
-from r2k.email import send_webpage_to_kindle
+from r2k.email_sender import send_webpage_to_kindle
 from r2k.feeds import Feed
 
 

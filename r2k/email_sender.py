@@ -1,7 +1,7 @@
 import smtplib
 
-from r2k.config import config
-from r2k.unicode import strip_common_unicode_chars
+from .config import config
+from .unicode import strip_common_unicode_chars
 
 
 def create_message(title: str, url: str) -> str:
