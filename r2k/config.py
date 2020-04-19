@@ -57,7 +57,8 @@ class Config:
         """Override in order to set the pushtokindle hostname"""
         # TODO: Make configurable - consider services other than pushtokindle, as well as cleaning out the article
         # using newspaper
-        return f"{self.kindle_address}@pushtokindle.com"
+        kindle_address = self.kindle_address.split("@")[0]
+        return f"{kindle_address}@pushtokindle.com"
 
     def as_dict(self) -> dict:
         """Return the underlying dict"""

@@ -19,8 +19,6 @@ def config_init(path: str, force: bool) -> None:
     send_from = logger.prompt("Please provide your gmail email address")
     password = logger.prompt("Please provide your gmail app password", hide_input=True)
     kindle_address = logger.prompt("Please provide your free kindle address (e.g. my_kindle@kindle.com)")
-    if "@" in kindle_address:
-        kindle_address = kindle_address.split("@")[0]
     config.reset({"send_from": send_from, "kindle_address": kindle_address, "password": password})
     logger.info("Successfully set the configuration!")
 
