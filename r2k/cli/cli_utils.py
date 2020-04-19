@@ -41,6 +41,7 @@ def load_config(ctx: click.Context, param: Union[click.Option, click.Parameter],
 
     if param.expose_value:
         click.echo("Not loading config as we're in `r2k config init`")
+        return value
     else:
         if os.path.exists(value):
             config.load(value)
