@@ -73,9 +73,17 @@ def force_option(help_text: str) -> Callable:
     return decorator
 
 
+def get_dummy_context() -> click.Context:
+    """Return a dummy click context to allow using eg click.echo when not running an actual click command"""
+    ctx = click.Context(click.Command("dummy"))
+    ctx.params["verbose"] = True
+    return ctx
+
+
 def get_global_context() -> click.Context:
     """Return the top-level global Click context"""
-    ctx = click.get_current_context()
+    ctx = click.get_current_context(silent=True) or get_dummy_context()
+
     while ctx.parent:
         ctx = ctx.parent
     return ctx
@@ -83,4 +91,4 @@ def get_global_context() -> click.Context:
 
 def is_verbose() -> bool:
     """Return True if --verbose was passed to the top-level click command"""
-    return get_global_context().params["verbose"]
+    return get_global_context().params.get("verbose", False)
