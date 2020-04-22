@@ -9,9 +9,9 @@ from .kindle import kindle
 @click.option(
     "-v", "--verbose", is_flag=True, default=False, help="If set, will print DEBUG messages",
 )
-def main(verbose: bool) -> None:
+@click.pass_context
+def main(ctx: click.Context, verbose: bool) -> None:
     """A tool to send items from RSS feeds to Kindle"""
-    ctx = click.get_current_context()
     setattr(ctx, "verbose", verbose)
 
 

@@ -61,11 +61,14 @@ def get_local_feed(feed_title: str) -> dict:
 def send_updates(unread_articles: list, feed_title: str) -> None:
     """Iterate over `unread_articles`, and send each one to the kindle"""
     if unread_articles:
+        successful_count = 0
         for article in unread_articles:
             logger.info(f"Sending `{article.title}`...")
-            send_webpage_to_kindle(article.title, article.link)
-            logger.debug("Email successfully sent!")
+            sent = send_webpage_to_kindle(article.title, article.link)
+            successful_count += int(sent)
 
-        logger.info(f"Successfully sent {len(unread_articles)} articles from the `{feed_title}` feed!")
+        logger.info(f"Successfully sent {successful_count} articles from the `{feed_title}` feed!")
+        if successful_count < len(unread_articles):
+            logger.warning(f"{len(unread_articles) - successful_count} messages were not sent :(")
     else:
         logger.info(f"No new content for `{feed_title}`")

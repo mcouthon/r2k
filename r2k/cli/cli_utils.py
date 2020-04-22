@@ -40,7 +40,8 @@ def load_config(ctx: click.Context, param: Union[click.Option, click.Parameter],
     from r2k.config import config
 
     if param.expose_value:
-        click.echo("Not loading config as we're in `r2k config init`")
+        if is_verbose():
+            click.echo("Not loading config as we're in `r2k config init`")
         return value
     else:
         if os.path.exists(value):

@@ -6,6 +6,7 @@ import click
 
 from r2k.cli import cli_utils, logger
 from r2k.config import config
+from r2k.constants import Parser
 
 
 @click.command("init")
@@ -16,11 +17,22 @@ def config_init(path: str, force: bool) -> None:
     create_config_dir_if_not_exists(path)
     validate_config_overwrite(path, force)
 
+    new_config = get_new_config()
+    config.reset(path=path, new_config=new_config)
+    logger.info("Successfully set the configuration!")
+
+
+def get_new_config() -> dict:
+    """Ask the user to fill in all the necessary information, and return the resulting dict"""
     send_from = logger.prompt("Please provide your gmail email address")
     password = logger.prompt("Please provide your gmail app password", hide_input=True)
     kindle_address = logger.prompt("Please provide your free kindle address (e.g. my_kindle@kindle.com)")
-    config.reset({"send_from": send_from, "kindle_address": kindle_address, "password": password})
-    logger.info("Successfully set the configuration!")
+    parser = logger.prompt(
+        "Please choose the parser you're going to use",
+        default=Parser.MERCURY,
+        type=click.Choice(Parser.SUPPORTED_PARSERS),
+    )
+    return {"send_from": send_from, "kindle_address": kindle_address, "password": password, "parser": parser}
 
 
 def validate_config_overwrite(path: str, force: bool) -> None:

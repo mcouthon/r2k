@@ -3,12 +3,13 @@ from typing import Any, Iterator
 import yaml
 
 from .cli import logger
+from .constants import Parser
 
 
 class Config:
     """Global configuration for the project"""
 
-    DEFAULT_VALUES: dict = {"feeds": {}}
+    DEFAULT_VALUES: dict = {"feeds": {}, "parser": Parser.MERCURY}
 
     def __init__(self) -> None:
         """Constructor"""
@@ -54,18 +55,20 @@ class Config:
 
     @property
     def send_to(self) -> str:
-        """Override in order to set the pushtokindle hostname"""
-        # TODO: Make configurable - consider services other than pushtokindle, as well as cleaning out the article
-        # using newspaper
-        kindle_address = self.kindle_address.split("@")[0]
-        return f"{kindle_address}@pushtokindle.com"
+        """The address to which the email should be sent"""
+        if self.parser == Parser.PUSH_TO_KINDLE:
+            kindle_address = self.kindle_address.split("@")[0]
+            return f"{kindle_address}@pushtokindle.com"
+        else:
+            return self.kindle_address
 
     def as_dict(self) -> dict:
         """Return the underlying dict"""
         return self._config
 
-    def reset(self, new_config: dict) -> None:
+    def reset(self, path: str, new_config: dict) -> None:
         """Set a new config instead of the existing one"""
+        self._path = path
         self._config = Config.DEFAULT_VALUES.copy()
         self._config.update(new_config)
         self.save()
