@@ -87,4 +87,12 @@ bump-version:
 publish-to-pypi:
 	$(POETRY_BIN) publish
 
-publish: bump-version build publish-to-pypi
+commit-bump-version:
+	git add .
+	git commit --all --message "Bump Version"
+
+push:
+	git push
+
+.PHONY: publish
+publish: $(SRC_FILES) bump-version build publish-to-pypi commit-bump-version push
