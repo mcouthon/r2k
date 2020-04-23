@@ -44,7 +44,12 @@ def add_content(msg: EmailMessage, url: str) -> bool:
         attachment = get_mercury_attachment(url)
         if not attachment:
             return False
-        msg.add_attachment(attachment.encode("utf-8"), maintype="text", subtype="html")
+        msg.add_attachment(
+            attachment.encode("utf-8"),
+            maintype="multipart",
+            subtype="mixed; name=attachment.html",
+            filename="attachment.html",
+        )
     return True
 
 
