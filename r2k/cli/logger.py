@@ -5,7 +5,7 @@ import click
 from .cli_utils import is_verbose
 
 
-def secho(msg: Any, fg: str, bold: bool = True) -> None:
+def secho(msg: Any, fg: str, bold: bool = False) -> None:
     """Similar to click.secho"""
     if not isinstance(msg, str):
         msg = str(msg)
