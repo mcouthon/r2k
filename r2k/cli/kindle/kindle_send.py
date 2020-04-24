@@ -22,6 +22,7 @@ from r2k.feeds import Feed
 )
 def kindle_send(feed_title: str) -> None:
     """Send updates from one or all feeds."""
+    logger.info(f"[Parsing articles with the `{config.parser}` parser]\n")
     if feed_title:
         send_articles_for_feed(feed_title)
     else:
@@ -38,7 +39,7 @@ def send_articles_for_feed(feed_title: str) -> None:
     unread_articles = get_unread_articles_for_feed(local_feed)
 
     send_updates(unread_articles, feed_title)
-    local_feed["updated"] = str(datetime.now().astimezone())
+    local_feed["updated"] = datetime.now().astimezone()
     config.save()
 
 
@@ -63,7 +64,7 @@ def send_updates(unread_articles: list, feed_title: str) -> None:
     if unread_articles:
         successful_count = 0
         for article in unread_articles:
-            logger.info(f"Sending `{article.title}`...")
+            logger.info(f"Handling `{article.title}`...")
             sent = send_webpage_to_kindle(article.title, article.link)
             successful_count += int(sent)
 

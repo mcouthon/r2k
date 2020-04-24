@@ -1,9 +1,13 @@
-import os
+from os.path import dirname, expanduser, join
 
 CONFIG_ENV_VAR = "RSS_TO_KINDLE_CONFIG"
 
-DEFAULT_APP_PATH = os.path.expanduser("~/.r2k")
-DEFAULT_CONFIG_PATH = os.path.join(DEFAULT_APP_PATH, "config.yml")
+DEFAULT_APP_PATH = expanduser("~/.r2k")
+DEFAULT_CONFIG_PATH = join(DEFAULT_APP_PATH, "config.yml")
+
+PACKAGE_DIR = dirname(__file__)
+TOP_LEVEL_DIR = dirname(PACKAGE_DIR)
+TEMPLATES_DIR = join(TOP_LEVEL_DIR, "templates")
 
 
 class Parser:

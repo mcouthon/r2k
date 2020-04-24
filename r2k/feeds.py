@@ -43,12 +43,11 @@ class Feed(feedparser.FeedParserDict):
         raw_date = self.get_raw_date_from_entry(entry)
         return get_pretty_date_str(raw_date)
 
-    def find_unread_articles_from_date(self, last_updated: str) -> List[feedparser.FeedParserDict]:
+    def find_unread_articles_from_date(self, last_updated: datetime) -> List[feedparser.FeedParserDict]:
         """Find all the new articles since `last_updated`"""
-        last_updated_date = parse_date(last_updated)
-        return [entry for entry in self.entries if self.get_parsed_date_from_entry(entry) > last_updated_date]
+        return [entry for entry in self.entries if self.get_parsed_date_from_entry(entry) > last_updated]
 
-    def get_unread_articles(self, last_updated: Optional[str]) -> List[feedparser.FeedParserDict]:
+    def get_unread_articles(self, last_updated: Optional[datetime]) -> List[feedparser.FeedParserDict]:
         """
         Return all the new articles
 

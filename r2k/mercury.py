@@ -1,7 +1,8 @@
+import os
 import sys
 from contextlib import contextmanager
 from time import sleep
-from typing import Iterator, Optional
+from typing import Iterator, Optional, Tuple
 
 import docker
 import requests
@@ -10,6 +11,9 @@ from docker.models.containers import Container
 from requests.exceptions import ConnectionError
 
 from r2k.cli import logger
+
+from .constants import TEMPLATES_DIR
+from .dates import get_pretty_date_str
 
 CONTAINER_NAME = "mercury-parser-api"
 MERCURY_PORT = 3000
@@ -20,7 +24,7 @@ CONNECTION_ATTEMPTS = 10
 def _validate_container_is_up() -> None:
     """Try to connect to the mercury parser service several times. Quit app if not successful"""
     errors = set()
-    logger.debug("Validating connection to container...")
+    logger.debug(f"Launched container at {BASE_MERCURY_URL}. Validating it's up...")
     while retries := CONNECTION_ATTEMPTS:
         try:
             requests.get(BASE_MERCURY_URL)
@@ -39,14 +43,16 @@ def _validate_container_is_up() -> None:
 
 
 def clean_existing_containers(client: docker.DockerClient) -> None:
+    """Remove any existing mercury parser API containers"""
     all_containers = client.containers.list(all=True, sparse=True)
     for container in all_containers:
         if container.attrs["Names"] == [f"/{CONTAINER_NAME}"]:
-            logger.debug("Found an existing container with the same name")
+            logger.debug("Found an existing container with the same name...")
             remove_container(container)
 
 
 def remove_container(container: Optional[Container]) -> None:
+    """Stop and remove a docker container"""
     if container:
         logger.debug("Stopping container...")
         container.stop()
@@ -56,6 +62,7 @@ def remove_container(container: Optional[Container]) -> None:
 
 def run_mercury_container(client: docker.DockerClient) -> Container:
     """Launch a new mercury-parser docker container"""
+    logger.debug("Launching a new mercury-parser Docker container...")
     return client.containers.run(
         "wangqiru/mercury-parser-api:latest",
         detach=True,
@@ -74,34 +81,64 @@ def mercury_parser() -> Iterator[None]:
     client = docker.from_env()
     container = None
     try:
-        logger.debug("Removing any existing mercury-parser containers...")
         clean_existing_containers(client)
-        logger.debug("Launching a new mercury-parser Docker container...")
         container = run_mercury_container(client)
-        logger.debug(f"Launched container at {BASE_MERCURY_URL}. Validating it's up...")
         _validate_container_is_up()
         yield
     except (ConnectionError, DockerAPIError) as e:
-        logger.error("Could not connect to Docker. Is it running?")
+        logger.error("Could not connect to Docker. Run with -v to get more details")
         logger.debug(f"Error info:\n{e}")
         sys.exit(1)
     finally:
         remove_container(container)
 
 
-def get_clean_article(url: str) -> dict:
+def get_clean_article(url: str) -> Tuple[Optional[str], Optional[str]]:
     """
     Create a temporary container running the mercury parser and try to parse the URL with it
 
-    :return: the JSON encoded parsed document
+    :return: A (None, None) tuple if the parsing failed, or
+    A (article, title) tuple, where `article` is the complete HTML document, and title is... the title
     """
     with mercury_parser():
-        full_url = f"{BASE_MERCURY_URL}?url={url}"
-        logger.info("Parsing article with Mercury Parser...")
-        logger.debug(f"Sending request to {full_url}")
-        result = requests.get(full_url).json()
-        logger.info("Finished parsing")
+        result = get_parsed_doc(url)
         if result.get("error"):
             error_msg = result.get("message", "Unknown")
             logger.error(f"Failed to parse {url}\nError: {error_msg}")
-        return result
+            return None, None
+
+        return get_formatted_html(result)
+
+
+def get_parsed_doc(url: str) -> dict:
+    """Make an HTTP call to the mercury API and get the parsed document"""
+    full_url = f"{BASE_MERCURY_URL}?url={url}"
+    logger.debug("Parsing article with Mercury Parser...")
+    logger.debug(f"Sending request to {full_url}")
+    result = requests.get(full_url).json()
+    logger.debug("Finished parsing")
+    return result
+
+
+def get_formatted_html(parsed_article: dict) -> Tuple[Optional[str], Optional[str]]:
+    """
+    Create an HTML document from the parsed article, and the base.html Template
+
+    :return: A (None, None) tuple if the parsing failed, or
+    A (article, title) tuple, where `article` is the complete HTML document, and title is... the title
+    """
+    body = parsed_article.get("content")
+    title = parsed_article.get("title")
+    author = parsed_article.get("author")
+    date = parsed_article.get("date_published")
+    site = parsed_article.get("domain", "")
+    if not body or not title:
+        return None, None
+
+    title = f"{title} - {author}" if author else title
+    date = get_pretty_date_str(date, show_time=True) if date else ""
+    subtitle = f"[{site}] -- {date}"
+
+    with open(os.path.join(TEMPLATES_DIR, "base.html")) as f:
+        template = f.read()
+    return template.format(body=body, title=title, subtitle=subtitle), title
