@@ -93,3 +93,8 @@ def get_global_context() -> click.Context:
 def is_verbose() -> bool:
     """Return True if --verbose was passed to the top-level click command"""
     return get_global_context().params.get("verbose", False)
+
+
+def no_ansi() -> bool:
+    """Return True if --no-ansi was passed to the top-level click command"""
+    return get_global_context().params.get("no_ansi", False)
