@@ -1,8 +1,7 @@
-import os
 import sys
 from contextlib import contextmanager
 from time import sleep
-from typing import Iterator, Optional, Tuple
+from typing import Iterator, Optional
 
 import docker
 import requests
@@ -11,9 +10,6 @@ from docker.models.containers import Container
 from requests.exceptions import ConnectionError
 
 from r2k.cli import logger
-
-from .constants import TEMPLATES_DIR
-from .dates import get_pretty_date_str
 
 CONTAINER_NAME = "mercury-parser-api"
 MERCURY_PORT = 3000
@@ -93,7 +89,7 @@ def mercury_parser() -> Iterator[None]:
         remove_container(container)
 
 
-def get_clean_article(url: str) -> Tuple[Optional[str], Optional[str]]:
+def parse(url: str) -> Optional[dict]:
     """
     Create a temporary container running the mercury parser and try to parse the URL with it
 
@@ -105,9 +101,8 @@ def get_clean_article(url: str) -> Tuple[Optional[str], Optional[str]]:
         if result.get("error"):
             error_msg = result.get("message", "Unknown")
             logger.error(f"Failed to parse {url}\nError: {error_msg}")
-            return None, None
-
-        return get_formatted_html(result)
+            return None
+        return result
 
 
 def get_parsed_doc(url: str) -> dict:
@@ -118,27 +113,3 @@ def get_parsed_doc(url: str) -> dict:
     result = requests.get(full_url).json()
     logger.debug("Finished parsing")
     return result
-
-
-def get_formatted_html(parsed_article: dict) -> Tuple[Optional[str], Optional[str]]:
-    """
-    Create an HTML document from the parsed article, and the base.html Template
-
-    :return: A (None, None) tuple if the parsing failed, or
-    A (article, title) tuple, where `article` is the complete HTML document, and title is... the title
-    """
-    body = parsed_article.get("content")
-    title = parsed_article.get("title")
-    author = parsed_article.get("author")
-    date = parsed_article.get("date_published")
-    site = parsed_article.get("domain", "")
-    if not body or not title:
-        return None, None
-
-    title = f"{title} - {author}" if author else title
-    date = get_pretty_date_str(date, show_time=True) if date else ""
-    subtitle = f"[{site}] -- {date}"
-
-    with open(os.path.join(TEMPLATES_DIR, "base.html")) as f:
-        template = f.read()
-    return template.format(body=body, title=title, subtitle=subtitle), title
