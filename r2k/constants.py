@@ -1,3 +1,4 @@
+from enum import Enum
 from os.path import dirname, expanduser, join
 
 CONFIG_ENV_VAR = "RSS_TO_KINDLE_CONFIG"
@@ -10,9 +11,10 @@ TOP_LEVEL_DIR = dirname(PACKAGE_DIR)
 TEMPLATES_DIR = join(TOP_LEVEL_DIR, "templates")
 
 
-class Parser:
+class Parser(Enum):
     """A convenience class to represent the available parsing options"""
 
     PUSH_TO_KINDLE = "pushtokindle"
     MERCURY = "mercury"
-    SUPPORTED_PARSERS = [MERCURY, PUSH_TO_KINDLE]
+
+    __values__ = PUSH_TO_KINDLE, MERCURY

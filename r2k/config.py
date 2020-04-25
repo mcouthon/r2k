@@ -1,4 +1,5 @@
-from typing import Any, Iterator
+from dataclasses import asdict, dataclass, field, fields
+from typing import Any, List, Optional
 
 import yaml
 
@@ -6,15 +7,29 @@ from .cli import logger
 from .constants import Parser
 
 
+@dataclass
 class Config:
     """Global configuration for the project"""
 
-    DEFAULT_VALUES: dict = {"feeds": {}, "parser": Parser.MERCURY}
+    feeds: dict
+    password: str
+    kindle_address: str
+    send_from: str
+    send_to: str = field(init=False, default="")
+    parser: Parser = Parser.MERCURY
 
-    def __init__(self) -> None:
-        """Constructor"""
-        self._path = ""
-        self._config = Config.DEFAULT_VALUES.copy()
+    # Internal properties not accessible outside the class
+    _path: str = field(init=False, repr=False)
+    _loaded: bool = field(init=False, repr=False, default=False)
+
+    def __post_load__(self) -> None:
+        """Tasks to perform after loading the config from the YAML"""
+        self._loaded = True
+        if self.parser == Parser.PUSH_TO_KINDLE:
+            kindle_address = self.kindle_address.split("@")[0]
+            self.send_to = f"{kindle_address}@pushtokindle.com"
+        else:
+            self.send_to = self.kindle_address
 
     def load(self, path: str) -> None:
         """Load configurations from a YAML file"""
@@ -24,58 +39,36 @@ class Config:
         with open(self._path) as f:
             file_config = yaml.safe_load(f)
 
-        self._config.update(file_config)
-
-    def __getattr__(self, item: str) -> Any:
-        """Override in order to allow accessing attributes from internal dict"""
-        # Allow for private arguments
-        if item.startswith("_"):
-            return super().__getattribute__(item)
-
-        if item in self._config:
-            return self._config[item]
-        raise AttributeError(f"Could not find a `{item}` attribute in the config")
+        self.__dict__.update(file_config)
+        self.__post_load__()
 
     def __setattr__(self, key: str, value: Any) -> None:
-        """Override in order to allow setting attributes to internal dict"""
-        # Allow for private arguments
-        if key.startswith("_"):
-            return super().__setattr__(key, value)
-
-        self._config[key] = value
+        """Override in order to allow dumping changes to file"""
+        super().__setattr__(key, value)
         self.save()
 
-    def save(self) -> None:
+    def save(self, path: Optional[str] = None) -> None:
         """Dump the contents of the internal dict to file"""
+        if not self._loaded:
+            return
+
         if not self._path:
-            raise FileNotFoundError("Path not set in Config. Need to run config.load before running config.save")
+            if path:
+                self._path = path
+            else:
+                raise FileNotFoundError("Path not set in Config. Need to run config.load before running config.save")
 
         with open(self._path, "w") as f:
-            yaml.safe_dump(self._config, f, default_flow_style=False)
-
-    @property
-    def send_to(self) -> str:
-        """The address to which the email should be sent"""
-        if self.parser == Parser.PUSH_TO_KINDLE:
-            kindle_address = self.kindle_address.split("@")[0]
-            return f"{kindle_address}@pushtokindle.com"
-        else:
-            return self.kindle_address
+            yaml.safe_dump(self.as_dict(), f, default_flow_style=False)
 
     def as_dict(self) -> dict:
         """Return the underlying dict"""
-        return self._config
+        return asdict(self)
 
-    def reset(self, path: str, new_config: dict) -> None:
-        """Set a new config instead of the existing one"""
-        self._path = path
-        self._config = Config.DEFAULT_VALUES.copy()
-        self._config.update(new_config)
-        self.save()
-
-    def __iter__(self) -> Iterator:
-        """Iterate over the internal dict"""
-        return self._config.__iter__()
+    @classmethod
+    def fields(cls) -> List[str]:
+        """Return a tuple with all the publicly exposed fields of the Config class"""
+        return [f.name for f in fields(cls) if f.type.repr]
 
 
-config = Config()
+config = Config(feeds={}, kindle_address="", password="", send_from="")
