@@ -24,6 +24,7 @@ pyyaml = "^5.3.1"
 beautifulsoup4 = "^4.9.0"
 pick = "^0.6.7"
 python-dateutil = "^2.8.1"
+orjson = "^2.6.6"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.2.0"
