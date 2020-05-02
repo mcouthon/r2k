@@ -18,6 +18,12 @@
       </navLabel>
       <content src="title.xhtml"/>
     </navPoint>
+    <navPoint id="navpoint-2" playOrder="2">
+      <navLabel>
+        <text>TOC</text>
+      </navLabel>
+      <content src="toc.xhtml"/>
+    </navPoint>
     ${navpoints}
   </navMap>
 </ncx>

@@ -12,6 +12,7 @@
   <manifest>
     <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
     <item id="title" href="title.xhtml" media-type="application/xhtml+xml"/>
+    <item id="toc" href="toc.xhtml" media-type="application/xhtml+xml"/>
     <item id="css" href="stylesheet.css" media-type="text/css"/>
     <item id="cover" href="images/cover.png" media-type="image/png"/>
     ${manifest_articles}
@@ -19,9 +20,11 @@
   </manifest>
   <spine toc="ncx">
     <itemref idref="title" linear="no"/>
+    <itemref idref="toc"/>
     ${spine_articles}
   </spine>
   <guide>
     <reference href="title.xhtml" type="cover" title="Cover"/>
+    <reference href="toc.xhtml" type="toc" title="Cover"/>
   </guide>
 </package>
