@@ -114,7 +114,7 @@ class MercuryParser:
             logger.error(f"Error info:{errors_str}")
         sys.exit(1)
 
-    def parse(self, url: str) -> Optional[dict]:
+    def parse(self, url: str) -> dict:
         """
         Parse a single URL with the Mercury Parser and return the result
         """

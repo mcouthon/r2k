@@ -5,19 +5,18 @@ from shutil import copyfile, rmtree
 from string import Template
 from tempfile import mkdtemp
 from typing import Any, List, Optional
-from urllib.parse import urljoin, urlparse
 from uuid import uuid4
 from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile
 
-import requests
-from bs4 import BeautifulSoup, element
+from bs4 import BeautifulSoup
 
 from r2k.cli import logger
-from r2k.constants import HTML_HEADERS, TEMPLATES_DIR
+from r2k.constants import TEMPLATES_DIR
 from r2k.feeds import Article
 from r2k.unicode import normalize_str, strip_common_unicode_chars
 
-from . import mercury
+from . import images
+from .mercury import MercuryParser
 
 META_INF = "META-INF"
 OEBPS = "OEBPS"
@@ -25,6 +24,9 @@ MIMETYPE = "mimetype"
 IMAGES = "images"
 CONTENT = "content"
 _R2K = "_r2k"
+
+# The number of elements in toc.ncx that appear before the articles (the initial 1 is because toc starts from 1, not 0)
+NAVPOINT_OFFSET = 1 + 2
 
 EPUB_DIR = join(TEMPLATES_DIR, "epub")
 
@@ -62,7 +64,7 @@ class EPUBArticle:
         self.content: Optional[str] = None
         self.images: List[str] = []
 
-    def parse(self) -> bool:
+    def parse(self, mercury: MercuryParser) -> bool:
         """
         Prepare the content of the article for EPUB
 
@@ -72,6 +74,7 @@ class EPUBArticle:
             3. Replace all the <img "src"> tags with the local paths of the downloaded images
         :return: True iff the mercury parsing succeeded
         """
+        logger.info(f"Parsing `{self.title}`...")
         parsed_article = mercury.parse(self.url)
         raw_content = parsed_article.get("content")
         if not raw_content:
@@ -79,37 +82,6 @@ class EPUBArticle:
         clean_html = strip_common_unicode_chars(raw_content)
         self.content = self.parse_images(clean_html)
         return True
-
-    @staticmethod
-    def is_valid(url: str) -> bool:
-        """
-        Checks whether `url` is a valid URL.
-        """
-        parsed = urlparse(url)
-        return bool(parsed.netloc) and bool(parsed.scheme)
-
-    def get_img_url(self, img: element.Tag) -> Optional[str]:
-        """
-        Get an absolute img URL from an img HTML element (with some checks and verifications first)
-        """
-        img_url = img.attrs.get("src")
-        if not img_url:
-            # if img does not contain src attribute, just skip
-            return None
-
-        # In case img_url is relative, append it to the root url (urljoin will return img_url if it's an absolute URL)
-        img_url = urljoin(self.url, img_url)
-
-        # remove URLs like '/hsts-pixel.gif?c=3.2.5'
-        try:
-            pos = img_url.index("?")
-            img_url = img_url[:pos]
-        except ValueError:
-            pass
-
-        if self.is_valid(img_url):
-            return img_url
-        return None
 
     def parse_images(self, raw_content: str) -> str:
         """
@@ -124,7 +96,7 @@ class EPUBArticle:
         soup = BeautifulSoup(raw_content, "html.parser")
         logger.debug("Looking for images...")
         for img in soup.find_all("img"):
-            img_url = self.get_img_url(img)
+            img_url = images.get_img_url(self.url, img)
             if not img_url:
                 continue
 
@@ -135,30 +107,14 @@ class EPUBArticle:
 
         return soup.decode(pretty_print=True)
 
-    @staticmethod
-    def get_image_filename(url: str) -> str:
-        """
-        Get image name from its URL with a unique prefix to avoid collisions
-        """
-        image_basename = url.split("/")[-1]
-        prefix = str(uuid4())[:8]
-        # We start with img because XML IDs cannot start with numbers
-        return f"img-{prefix}-{image_basename}"
-
     def download_image(self, url: str) -> str:
         """
         Download an image from a URL into the images folder
         """
         logger.debug(f"Downloading image {url}...")
-        image_name = self.get_image_filename(url)
+        image_name = images.get_image_filename(url)
         image_path = join(self.images_path, image_name)
-
-        # download the body of response by chunk, not immediately
-        response = requests.get(url, headers=HTML_HEADERS, stream=True)
-        with open(image_path, "wb") as f:
-            for data in response.iter_content(1024):
-                # write data read to the file
-                f.write(data)
+        images.download_image(url, image_path)
         return image_name
 
     def get_kwargs(self) -> dict:
@@ -200,16 +156,20 @@ class EPUB:
 
         :return: Path to the created epub archive
         """
+        logger.info(f"Creating an EPUB book for `{self.title}`...")
         try:
             self.prepare_epub_dirs()
             self.copy_fixed_files()
 
             self.render_title()
-            self.render_toc()
+            self.render_ncx_toc()
+            self.render_html_toc()
             self.render_articles()
             self.render_opf()
 
-            return self.compress_epub()
+            epub_path = self.compress_epub()
+            logger.info("Successfully created an EPUB archive!")
+            return epub_path
         finally:
             rmtree(self._dst_path)
 
@@ -267,13 +227,14 @@ class EPUB:
             3. If the article was parsed successfully, use the `article.xhtml` template to create the final article
         """
         logger.debug("Rendering articles...")
-        for article in self.articles:
-            if not article.parse():
-                continue
-            kwargs = dict(title=article.title, author=article.author, date=article.date, content=article.content)
-            article_path = join(OEBPS, CONTENT, f"{article.id}.xhtml")
-            article_html = self.render_template(join(OEBPS, CONTENT, "article.xhtml"), **kwargs)
-            self.write_file(article_html, article_path)
+        with MercuryParser() as mercury:
+            for article in self.articles:
+                if not article.parse(mercury):
+                    continue
+                kwargs = dict(title=article.title, author=article.author, date=article.date, content=article.content)
+                article_path = join(OEBPS, CONTENT, f"{article.id}.xhtml")
+                article_html = self.render_template(join(OEBPS, CONTENT, "article.xhtml"), **kwargs)
+                self.write_file(article_html, article_path)
 
     def render_opf(self) -> None:
         """
@@ -305,7 +266,7 @@ class EPUB:
         logger.debug("Generating manifest images...")
         manifest_image_template = Template('<item id="${id}" href="images/${id}" media-type="image/${ext}"/>')
         manifest_images: List[dict] = [
-            dict(id=image_name, ext=image_name.rsplit(".", 1)[1])
+            dict(id=image_name, ext=images.get_img_extension(image_name))
             for image_name in listdir(join(self._dst_path, OEBPS, IMAGES))
             if image_name != "cover.png"
         ]
@@ -343,7 +304,7 @@ class EPUB:
         logger.debug("Rendering title.xhtml...")
         self.render_and_write(join(OEBPS, "title.xhtml"), **dict(title=self.title))
 
-    def render_toc(self) -> None:
+    def render_ncx_toc(self) -> None:
         """
         Generate, render and write the toc.ncx file (Table of Contents)
         """
@@ -352,14 +313,34 @@ class EPUB:
         kwargs = dict(title=self.title, uuid=self.uuid, navpoints=navpoints)
         self.render_and_write(join(OEBPS, "toc.ncx"), **kwargs)
 
+    def render_html_toc(self) -> None:
+        """
+        Generate, render and write the toc.xhtml file (Table of Contents)
+        """
+        logger.debug("Rendering toc.xhtml...")
+        toc = self.generate_html_toc()
+        kwargs = dict(toc=toc, title=self.title)
+        self.render_and_write(join(OEBPS, "toc.xhtml"), **kwargs)
+
+    def generate_html_toc(self) -> str:
+        """
+        Create an HTML <li> element per article
+        """
+        template = Template('<li><a href="content/${id}.xhtml">${title}</a></li>')
+        toc = [dict(id=article.id, title=article.title) for i, article in enumerate(self.articles)]
+        return "\n\t".join([template.substitute(**elem) for elem in toc])
+
     def generate_navpoints(self) -> str:
         """
         Create a navpoint per article for use in the toc.ncx file
         """
         logger.debug("Generating navpoints...")
         template = self.get_template(join(_R2K, "navpoint.xml"))
-        navpoints = [dict(id=article.id, title=article.title, order=i + 2) for i, article in enumerate(self.articles)]
-        return "\n".join([template.substitute(**navpoint) for navpoint in navpoints])
+        navpoints = [
+            dict(id=article.id, title=article.title, order=i + NAVPOINT_OFFSET)
+            for i, article in enumerate(self.articles)
+        ]
+        return "\n\t\t".join([template.substitute(**navpoint) for navpoint in navpoints])
 
     def copy_fixed_files(self) -> None:
         """
