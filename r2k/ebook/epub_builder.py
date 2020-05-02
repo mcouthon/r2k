@@ -12,11 +12,12 @@ from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile
 import requests
 from bs4 import BeautifulSoup, element
 
-from ebook import mercury
 from r2k.cli import logger
 from r2k.constants import HTML_HEADERS, TEMPLATES_DIR
 from r2k.feeds import Article
 from r2k.unicode import normalize_str, strip_common_unicode_chars
+
+from . import mercury
 
 META_INF = "META-INF"
 OEBPS = "OEBPS"
