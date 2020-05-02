@@ -46,32 +46,32 @@ def send_email_messages(msgs: List[EmailMessage]) -> int:
     return messages_sent
 
 
-def set_content(msg: EmailMessage, title: str, url: Optional[str], content: Optional[str]) -> None:
+def set_content(msg: EmailMessage, title: str, url: Optional[str], attachment_path: Optional[str]) -> None:
     """Either set the text content of the email message, or attach an attachment, based on the current parser"""
-    if content:
+    if attachment_path:
         filename = f"{title}.html"
         logger.debug(f"Setting attachment for {filename}")
-        msg.add_attachment(
-            content.encode("utf-8"),
-            maintype="text",
-            subtype=f'html; charset=utf-8; name="{filename}"',
-            filename=filename,
-        )
+        with open(attachment_path, "rb") as f:
+            msg.add_attachment(
+                f.read(),
+                maintype="application",
+                subtype=f'epub+zip; charset=utf-8; name="{filename}"',
+                filename=filename,
+            )
     elif url:
         logger.debug(f"Setting email content to {url}")
         msg.set_content(url)
 
 
-def create_email_message(title: str, url: Optional[str], content: Optional[str]) -> EmailMessage:
+def create_email_message(title: str, url: Optional[str], attachment_path: Optional[str]) -> EmailMessage:
     title = strip_common_unicode_chars(title)
     msg = build_basic_message(title)
-    set_content(msg, title, url, content)
+    set_content(msg, title, url, attachment_path)
     return msg
 
 
-def send_html(title: str, content: str) -> int:
-    """Send an HTML file to Kindle"""
-    msg = create_email_message(title, None, content)
+def send_epub(title: str, epub_path: str) -> int:
+    msg = create_email_message(title, None, epub_path)
     return send_email_messages([msg])
 
 

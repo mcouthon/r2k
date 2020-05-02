@@ -7,8 +7,8 @@ import click
 from r2k.cli import cli_utils, logger
 from r2k.config import config
 from r2k.constants import Parser
-from r2k.ebook.html_builder import build_html
-from r2k.email_sender import send_html, send_urls
+from r2k.ebook.epub_builder import create_epub
+from r2k.email_sender import send_epub, send_urls
 from r2k.feeds import Article, Feed
 
 
@@ -66,19 +66,19 @@ def send_updates(unread_articles: List[Article], feed_title: str) -> None:
         if Parser(config.parser) == Parser.PUSH_TO_KINDLE:
             successful_count = send_urls([(article.title, article.link) for article in unread_articles])
         else:
-            successful_count = send_html_book(unread_articles, feed_title)
+            successful_count = send_epub_book(unread_articles, feed_title)
 
         logger.info(f"Successfully sent {successful_count} articles from the `{feed_title}` feed!")
     else:
         logger.info(f"No new content for `{feed_title}`")
 
 
-def send_html_book(unread_articles: List[Article], feed_title: str) -> int:
-    """Create an HTML book from all the unread articles and send it via email"""
-    html_book = build_html(unread_articles, feed_title)
+def send_epub_book(unread_articles: List[Article], feed_title: str) -> int:
+    """Create an EPUB book from all the unread articles and send it via email"""
     date_range = get_unread_articles_date_range(unread_articles)
     title = f"{feed_title} [{date_range}]"
-    success = send_html(title, html_book)
+    epub_book = create_epub(unread_articles, title)
+    success = send_epub(title, epub_book)
     return len(unread_articles) if success else 0
 
 

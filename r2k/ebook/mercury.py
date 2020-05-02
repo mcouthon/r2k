@@ -89,7 +89,7 @@ def mercury_parser() -> Iterator[None]:
         remove_container(container)
 
 
-def parse(url: str) -> Optional[dict]:
+def parse(url: str) -> dict:
     """
     Create a temporary container running the mercury parser and try to parse the URL with it
 
@@ -101,7 +101,7 @@ def parse(url: str) -> Optional[dict]:
         if result.get("error"):
             error_msg = result.get("message", "Unknown")
             logger.error(f"Failed to parse {url}\nError: {error_msg}")
-            return None
+            return {}
         return result
 
 

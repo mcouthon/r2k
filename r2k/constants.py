@@ -3,6 +3,10 @@ from os.path import dirname, expanduser, join
 
 CONFIG_ENV_VAR = "RSS_TO_KINDLE_CONFIG"
 
+HTML_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3"
+}
+
 DEFAULT_APP_PATH = expanduser("~/.r2k")
 DEFAULT_CONFIG_PATH = join(DEFAULT_APP_PATH, "config.yml")
 
