@@ -1,3 +1,4 @@
+import os
 import sys
 from datetime import datetime
 from typing import List
@@ -78,7 +79,10 @@ def send_epub_book(unread_articles: List[Article], feed_title: str) -> int:
     date_range = get_unread_articles_date_range(unread_articles)
     title = f"{feed_title} [{date_range}]"
     epub_book = create_epub(unread_articles, title)
-    success = send_epub(title, epub_book)
+    try:
+        success = send_epub(title, epub_book)
+    finally:
+        os.remove(epub_book)
     return len(unread_articles) if success else 0
 
 
