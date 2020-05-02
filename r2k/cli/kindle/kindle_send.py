@@ -91,6 +91,6 @@ def get_unread_articles_date_range(unread_articles: List[Article]) -> str:
     if len(unread_articles) == 1:
         return unread_articles[0].get_str_date(short_date=True)
     else:
-        first_date = unread_articles[-1].get_str_date(short_date=True)
-        last_date = unread_articles[0].get_str_date(short_date=True)
+        first_date = unread_articles[0].get_str_date(short_date=True)
+        last_date = unread_articles[-1].get_str_date(short_date=True)
         return f"{first_date} — {last_date}"

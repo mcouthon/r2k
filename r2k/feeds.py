@@ -64,4 +64,7 @@ class Feed(feedparser.FeedParserDict):
             unread_articles = self.find_unread_articles_from_date(last_updated)
         else:
             unread_articles = self.find_unread_articles_from_user()
+
+        # Reverse, as we want the oldest articles first
+        unread_articles.reverse()
         return unread_articles
