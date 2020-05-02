@@ -20,10 +20,10 @@ class Article(feedparser.FeedParserDict):
         default = str(datetime.utcnow() - timedelta(days=30))
         return self.get("published") or self.get("updated") or default
 
-    def get_str_date(self: feedparser.FeedParserDict, show_time: bool = False, short_date: bool = False) -> str:
+    def get_str_date(self: feedparser.FeedParserDict) -> str:
         """Return a nicely formatted string from the date in the entry"""
         raw_date = self.get_raw_date()
-        return get_pretty_date_str(raw_date, show_time=show_time, short_date=short_date)
+        return get_pretty_date_str(raw_date)
 
 
 class Feed(feedparser.FeedParserDict):

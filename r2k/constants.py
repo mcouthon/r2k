@@ -14,6 +14,9 @@ PACKAGE_DIR = dirname(__file__)
 TOP_LEVEL_DIR = dirname(PACKAGE_DIR)
 TEMPLATES_DIR = join(TOP_LEVEL_DIR, "templates")
 
+# Number of articles to put in a single EPUB eBook. Otherwise the email size might exceed GMAIL's 25MB limit
+ARTICLE_EBOOK_LIMIT = 20
+
 
 class Parser(Enum):
     """A convenience class to represent the available parsing options"""

@@ -168,7 +168,7 @@ class EPUB:
             self.render_opf()
 
             epub_path = self.compress_epub()
-            logger.info("Successfully created an EPUB archive!")
+            logger.notice("Successfully created an EPUB archive!")
             return epub_path
         finally:
             rmtree(self._dst_path)
@@ -214,7 +214,10 @@ class EPUB:
         """
         for filename in files:
             epub.write(
-                filename=join(dirname, filename), arcname=join(relative_dirname, filename), compress_type=ZIP_DEFLATED,
+                filename=join(dirname, filename),
+                arcname=join(relative_dirname, filename),
+                compress_type=ZIP_DEFLATED,
+                compresslevel=9,
             )
 
     def render_articles(self) -> None:

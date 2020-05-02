@@ -29,7 +29,6 @@ def send_email_message(server: smtplib.SMTP, msg: EmailMessage) -> bool:
 
 def send_email_messages(msgs: List[EmailMessage]) -> int:
     """Send an email"""
-    # TODO: Consider making smtp server configurable
     messages_sent = 0
     try:
         logger.debug("Connecting to SMTP...")
@@ -40,7 +39,7 @@ def send_email_messages(msgs: List[EmailMessage]) -> int:
             for msg in msgs:
                 if send_email_message(server, msg):
                     messages_sent += 1
-                    logger.info("Email sent successfully!")
+                    logger.notice("Email sent successfully!\n")
     except smtplib.SMTPException as e:
         logger.error(f"Caught an exception while trying to send an email.\nError: {e}")
     return messages_sent

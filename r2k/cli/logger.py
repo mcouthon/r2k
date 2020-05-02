@@ -39,6 +39,11 @@ def info(msg: Any) -> None:
     secho(msg, "blue")
 
 
+def notice(msg: Any) -> None:
+    """click.echo in a green color"""
+    secho(msg, "green")
+
+
 def log(msg: Any) -> None:
     """click.echo in a white color"""
     secho(msg, "white")
