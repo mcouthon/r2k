@@ -1,6 +1,5 @@
 import smtplib
 from email.message import EmailMessage
-from os.path import basename
 from typing import List, Optional, Tuple
 
 from r2k.cli import logger
@@ -50,14 +49,14 @@ def send_email_messages(msgs: List[EmailMessage]) -> int:
 def set_content(msg: EmailMessage, title: str, url: Optional[str], attachment_path: Optional[str]) -> None:
     """Either set the text content of the email message, or attach an attachment, based on the current parser"""
     if attachment_path:
-        filename = basename(attachment_path)
+        # We are marking the attachment as HTML, although it's an epub, because kindle doesn't official accept
+        # EPUB files in emails, but unofficial it will convert the file with kindlegen and it'll work fine
+        # Reference: https://www.amazon.com/gp/sendtokindle/email
+        filename = f"{title}.html"
         logger.debug(f"Setting attachment for {title}")
         with open(attachment_path, "rb") as f:
             msg.add_attachment(
-                f.read(),
-                maintype="application",
-                subtype=f'epub+zip; charset=utf-8; name="{filename}"',
-                filename=filename,
+                f.read(), maintype="text", subtype=f'html; charset=utf-8; name="{filename}"', filename=filename,
             )
     elif url:
         logger.debug(f"Setting email content to {url}")

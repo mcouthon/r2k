@@ -1,7 +1,5 @@
 # TODO LIST
 
-- [ ] Run container only once for multiple articles
-- [ ] Create a mobi issue with multiple articles in it
-- [ ] Improve the TOC and the links:
-    - [ ] Each heading should link back to the TOC
-    - [ ] Perhaps a "back to beginning" link?
+- [x] Run container only once for multiple articles
+- [ ] Use kindlegen to create a MOBI from the EPUB
+- [x] Improve the TOC and the links:

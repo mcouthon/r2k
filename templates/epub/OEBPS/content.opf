@@ -25,6 +25,7 @@
   </spine>
   <guide>
     <reference href="title.xhtml" type="cover" title="Cover"/>
-    <reference href="toc.xhtml" type="toc" title="Cover"/>
+    <reference href="toc.xhtml" type="toc" title="TOC"/>
+    <reference href="toc.xhtml" type="start" title="Beginning"/>
   </guide>
 </package>
