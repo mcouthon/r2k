@@ -77,11 +77,13 @@ class EPUBArticle:
         logger.info(f"Parsing `{self.title}`...")
         parsed_article = mercury.parse(self.url)
         raw_content = parsed_article.get("content")
-        lead_image_url = parsed_article.get("lead_image_url")
         if not raw_content:
             return False
-        if lead_image_url:
-            raw_content = f'<img src="{lead_image_url}"/>'
+
+        # When some blogs (like xkcd.com) are parsed with mercury,
+        # their content doesn't include the actual image, so we're adding it here
+        if lead_image_url := parsed_article.get("lead_image_url"):
+            raw_content = f'<img src="{lead_image_url}"\n{raw_content}/>'
         clean_html = strip_common_unicode_chars(raw_content)
         self.content = self.parse_images(clean_html)
         return True
