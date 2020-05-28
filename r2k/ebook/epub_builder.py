@@ -4,19 +4,22 @@ from os.path import join
 from shutil import copyfile, rmtree
 from string import Template
 from tempfile import mkdtemp
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Type
 from uuid import uuid4
 from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile
 
 from bs4 import BeautifulSoup
 
 from r2k.cli import logger
-from r2k.constants import TEMPLATES_DIR
+from r2k.config import config
+from r2k.constants import TEMPLATES_DIR, Parser
 from r2k.feeds import Article
 from r2k.unicode import normalize_str, strip_common_unicode_chars
 
 from . import images
-from .mercury import MercuryParser
+from .base_parser import ParserBase
+from .mercury_parser import MercuryParser
+from .readability_parser import ReadabilityParser
 
 META_INF = "META-INF"
 OEBPS = "OEBPS"
@@ -64,7 +67,7 @@ class EPUBArticle:
         self.content: Optional[str] = None
         self.images: List[str] = []
 
-    def parse(self, mercury: MercuryParser) -> bool:
+    def parse(self, parser: ParserBase) -> bool:
         """
         Prepare the content of the article for EPUB
 
@@ -72,15 +75,15 @@ class EPUBArticle:
             1. Parse the article with the Mercury parser
             2. Download all the images mentioned in the article (EPUB format only supports embedded local images)
             3. Replace all the <img "src"> tags with the local paths of the downloaded images
-        :return: True iff the mercury parsing succeeded
+        :return: True iff the parsing succeeded
         """
         logger.info(f"Parsing `{self.title}`...")
-        parsed_article = mercury.parse(self.url)
+        parsed_article = parser.parse(self.url)
         raw_content = parsed_article.get("content")
         if not raw_content:
             return False
 
-        # When some blogs (like xkcd.com) are parsed with mercury,
+        # When some blogs (like xkcd.com) are parsed,
         # their content doesn't include the actual image, so we're adding it here
         if lead_image_url := parsed_article.get("lead_image_url"):
             raw_content = f'<img src="{lead_image_url}"/>\n{raw_content}'
@@ -235,14 +238,25 @@ class EPUB:
             3. If the article was parsed successfully, use the `article.xhtml` template to create the final article
         """
         logger.debug("Rendering articles...")
-        with MercuryParser() as mercury:
+        parser_cls = self._get_parser_class()
+        with parser_cls() as parser:
             for article in self.articles:
-                if not article.parse(mercury):
+                if not article.parse(parser):
                     continue
                 kwargs = dict(title=article.title, author=article.author, date=article.date, content=article.content)
                 article_path = join(OEBPS, CONTENT, f"{article.id}.xhtml")
                 article_html = self.render_template(join(OEBPS, CONTENT, "article.xhtml"), **kwargs)
                 self.write_file(article_html, article_path)
+
+    @staticmethod
+    def _get_parser_class() -> Type[ParserBase]:
+        parser_type = Parser(config.parser)
+        if parser_type == Parser.MERCURY:
+            return MercuryParser
+        elif parser_type == Parser.READABILITY:
+            return ReadabilityParser
+        else:
+            raise ValueError(f"Parser must be one of: {Parser.__values__}")
 
     def render_opf(self) -> None:
         """

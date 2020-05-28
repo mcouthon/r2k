@@ -16,7 +16,7 @@ class Config:
     kindle_address: str
     send_from: str
     send_to: str = field(init=False, default="")
-    parser: Parser = Parser.MERCURY
+    parser: Parser = Parser.READABILITY
 
     # Internal properties not accessible outside the class
     _path: str = field(init=False, repr=False)

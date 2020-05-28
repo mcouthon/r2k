@@ -23,5 +23,6 @@ class Parser(Enum):
 
     PUSH_TO_KINDLE = "pushtokindle"
     MERCURY = "mercury"
+    READABILITY = "readability"
 
-    __values__ = PUSH_TO_KINDLE, MERCURY
+    __values__ = PUSH_TO_KINDLE, MERCURY, READABILITY

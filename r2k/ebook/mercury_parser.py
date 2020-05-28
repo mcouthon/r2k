@@ -13,13 +13,15 @@ from requests.exceptions import ConnectionError
 
 from r2k.cli import logger
 
+from .base_parser import ParserBase
+
 CONTAINER_NAME = "mercury-parser-api"
 MERCURY_PORT = 3000
 BASE_MERCURY_URL = f"http://localhost:{MERCURY_PORT}/parser"
 CONNECTION_ATTEMPTS = 10
 
 
-class MercuryParser:
+class MercuryParser(ParserBase):
     """
     Represents the gateway to the Mercury Parser API
 
