@@ -66,7 +66,11 @@ def get_img_extension(path: str) -> str:
     """
     Parse the path and return the image's extension (replacing jpg to jpeg with accordance with EPUB spec)
     """
-    ext = path.rsplit(".", 1)[1]
+    path_list = path.rsplit(".", 1)
+    if len(path_list) == 2:
+        ext = path_list[1]
+    else:
+        ext = "jpeg"
     if ext == "jpg":
         ext = "jpeg"
     return ext
