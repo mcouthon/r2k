@@ -25,7 +25,9 @@ beautifulsoup4 = "^4.9.0"
 pick = "^0.6.7"
 python-dateutil = "^2.8.1"
 orjson = "^2.6.6"
-readability-lxml = "^0.7.1"
+
+# Installing from git as it includes some fixes necessary for sites like XKCD
+readability-lxml = { git = "https://github.com/mcouthon/python-readability.git" }
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.2.0"
