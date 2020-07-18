@@ -4,7 +4,9 @@
 and images) articles received from them directly to your Kindle.
 
 [Installation](#installation)
+
 [Cleaning up the articles](#cleaning-up-the-articles)
+
 [Usage](#usage)
 
 
