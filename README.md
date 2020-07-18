@@ -1,31 +1,34 @@
 # R2K (RSS to Kindle)
 
-A tool that lets you periodically send articles received from an RSS feed to your Kindle.
-`r2k` allows you to track your favorite RSS/Atom feeds, and send cleaned versions of them to your
-Kindle.
-
-It currently does this by sending you email messages through the 
-[PushToKindle](http://pushtokindle.com/) service. The service cleans up the articles, removing any
-ads and fluff, and you're left with only the text and images.
-
-Future releases are likely to include alternatives to using PushToKindle. The first such plugin
-will use a dockerized version of the [Mercury-Parser](https://github.com/postlight/mercury-parser).  
+`r2k` is a tool that lets you to track your favorite RSS/Atom feeds, and send cleaned-up (i.e. only text
+and images) articles received from them directly to your Kindle.
 
 [Installation](#installation)
+[Cleaning up the articles](#cleaning-up-the-articles)
 [Usage](#usage)
 
+
 ## Installation
-If you are using Poetry, add `r2k` to your `pyproject.toml` file by using:
+The best way to get up and running with `r2k` us to use pipx. Simply run:
 ```bash
-poetry add r2k
+pipx install r2k
 ```
 
-If not, you can use `pip`:
+If you're not using `pipx` (you should!), `pip install r2k` will also do.
 
-```
-pip install r2k
-```
+If you want to add `r2k` to your Poetry project, run `poetry add r2k`.
 
+## Cleaning up the articles
+
+There are currently 3 ways to clean up articles:
+1. The default is using the `readability` Python implementation. It doesn't require any extra steps or 
+installations, and thus is the easiest to use. It is, however, a bit less precise than the other 2 methods. 
+1. Using the [PushToKindle](http://pushtokindle.com/) service. The service works by attaching an email 
+address that forwards cleaned up versions of URLs to your Kindle. It's free for a certain amount of articles,
+but you need to become their supporter afterward.
+1. Using a dockerized version of the [Mercury-Parser](https://github.com/postlight/mercury-parser). 
+This method requires Docker, but is marginally better than the `readability` approach.
+ 
 ## Usage
 
 ### Preparations
@@ -64,6 +67,14 @@ To see your configuration run:
 ```bash
 r2k config show [-p CONFIG_PATH]
 ```
+
+#### Adding your GMail credentials
+
+Currently `r2k` relies on the fact that you have a GMail address, and it requires a 
+[Google App Password](https://support.google.com/accounts/answer/185833?hl=en&authuser=1).
+These are useful in cases where you don't want to go through 2FA authentication. Go
+[here](https://myaccount.google.com/u/1/apppasswords) to generate an `r2k` App Password, and 
+add it to the configuration.
 
 ### Add some RSS subscriptions
 
