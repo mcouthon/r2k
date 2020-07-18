@@ -1,0 +1,3 @@
+[submodule "python-readability"]
+	path = python-readability
+	url = git@github.com:mcouthon/python-readability.git

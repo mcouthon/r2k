@@ -1,13 +1,24 @@
-DIST_PATH 		:= dist
-PACKAGE_NAME 	:= r2k
-
 POETRY_BIN 		:= $(shell which poetry)
 PIPX_BIN 		:= $(shell which pipx)
+PYTHON_BIN		:= $(shell which python)
 
-PACKAGE_VERSION := $(shell $(POETRY_BIN) version | cut -d' ' -f2)
+R2K_DIST_PATH 		:= dist
+R2K_PACKAGE_NAME 	:= r2k
 
-DIST_PACKAGE := $(DIST_PATH)/$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
-SRC_FILES := $(shell find r2k -iname "*.py" -type f)
+READABILITY_DIR				:= python-readability
+READABILITY_DIST_PATH		:= $(READABILITY_DIR)/dist
+READABILITY_PACKAGE_NAME 	:= readability-lxml
+
+
+R2K_PACKAGE_VERSION := $(shell $(POETRY_BIN) version | cut -d' ' -f2)
+
+READABILITY_PACKAGE_VERSION := $(shell cd $(READABILITY_DIR); $(PYTHON_BIN) setup.py --version)
+
+R2K_DIST_PACKAGE := $(R2K_DIST_PATH)/$(R2K_PACKAGE_NAME)-$(R2K_PACKAGE_VERSION).tar.gz
+R2K_SRC_FILES := $(shell find r2k -iname "*.py" -type f)
+
+READABILITY_DIST_PACKAGE := $(READABILITY_DIST_PATH)/$(READABILITY_PACKAGE_NAME)-$(READABILITY_PACKAGE_VERSION).tar.gz
+READABILITY_SRC_FILES := $(shell find $(READABILITY_DIR)/readability -iname "*.py" -type f)
 
 POETRY_FILES := pyproject.toml poetry.lock
 
@@ -20,7 +31,8 @@ LOCAL_IMAGE_TAG := $(REPO_NAME):$(GIT_COMMIT)
 FULL_CONTAINER_NAME := $(ECR_URL)/$(LOCAL_IMAGE_TAG)
 
 clean:
-	rm -rf build $(DIST_PATH) .eggs *.egg-info
+	rm -rf build $(R2K_DIST_PATH) .eggs *.egg-info
+	rm -rf $(READABILITY_DIR)/build $(READABILITY_DIST_PATH) $(READABILITY_DIR)/.eggs $(READABILITY_DIR)/*.egg-info
 	rm -rf .benchmarks .coverage coverage.xml htmlcov report.xml
 	find . -type d -name '*.egg-info' -exec rm -rf {} +
 	find . -type d -name '__pycache__' -exec rm -rf {} +
@@ -29,9 +41,6 @@ clean:
 
 version: $(POETRY_FILES)
 	$(POETRY_BIN) version
-
-echo-version: $(POETRY_FILES)
-	@echo $(PACKAGE_VERSION)
 
 flake8:
 	$(POETRY_BIN) run flake8 $(PACKAGE_NAME)/ tests/
@@ -45,14 +54,14 @@ pydocstyle:
 lint: mypy flake8 pydocstyle
 
 format:
-	$(POETRY_BIN) run isort --recursive $(PACKAGE_NAME)/ tests/
-	$(POETRY_BIN) run black $(PACKAGE_NAME)/ tests/
-	$(POETRY_BIN) run pyupgrade --py3-plus --py36-plus --py37-plus --exit-zero-even-if-changed $(SRC_FILES)
+	$(POETRY_BIN) run isort --recursive $(R2K_PACKAGE_NAME)/ tests/
+	$(POETRY_BIN) run black $(R2K_PACKAGE_NAME)/ tests/
+	$(POETRY_BIN) run pyupgrade --py3-plus --py36-plus --py37-plus --exit-zero-even-if-changed $(R2K_SRC_FILES)
 
 format-check:
-	$(POETRY_BIN) run isort --recursive --check-only $(PACKAGE_NAME)/ tests/
-	$(POETRY_BIN) run black --check $(PACKAGE_NAME)/ tests/
-	$(POETRY_BIN) run pyupgrade --py3-plus --py36-plus --py37-plus $(SRC_FILES)
+	$(POETRY_BIN) run isort --recursive --check-only $(R2K_PACKAGE_NAME)/ tests/
+	$(POETRY_BIN) run black --check $(R2K_PACKAGE_NAME)/ tests/
+	$(POETRY_BIN) run pyupgrade --py3-plus --py36-plus --py37-plus $(R2K_SRC_FILES)
 
 prepare: format lint test
 
@@ -70,13 +79,18 @@ install: pyproject.toml
 pipx-install: $(DIST_PACKAGE)
 	$(PIPX_BIN) install $<
 
-build:
+$(READABILITY_DIST_PACKAGE):
+	cd $(READABILITY_DIR); $(PYTHON_BIN) setup.py sdist
+
+$(R2K_DIST_PACKAGE): $(READABILITY_DIST_PACKAGE)
 	$(POETRY_BIN) build --format=sdist
+
+build: $(R2K_DIST_PACKAGE)
 
 setup: clean install build pipx-install
 
 uninstall: clean
-	$(PIPX_BIN) uninstall $(PACKAGE_NAME)
+	$(PIPX_BIN) uninstall $(R2K_PACKAGE_NAME)
 
 docker-build: Dockerfile .dockerignore
 	docker build -t $(FULL_CONTAINER_NAME) -t $(LOCAL_IMAGE_TAG) .
@@ -95,4 +109,4 @@ push:
 	git push
 
 .PHONY: publish
-publish: $(SRC_FILES) bump-version build publish-to-pypi commit-bump-version push
+publish: $(READABILITY_DIST_PACKAGE) $(SRC_FILES) bump-version build publish-to-pypi commit-bump-version push
