@@ -456,10 +456,11 @@ version = "5.3.1"
 [[package]]
 category = "main"
 description = "fast html to text parser (article readability tool) with python3 support"
+develop = true
 name = "readability-lxml"
 optional = false
 python-versions = "*"
-version = "0.8.2"
+version = "0.8.1"
 
 [package.dependencies]
 chardet = "*"
@@ -471,8 +472,8 @@ test = ["timeout-decorator"]
 
 [package.source]
 reference = ""
-type = "file"
-url = "python-readability/dist/readability-lxml-0.8.2.tar.gz"
+type = "directory"
+url = "../python-readability"
 
 [[package]]
 category = "dev"
@@ -610,7 +611,7 @@ six = "*"
 docker = ["docker"]
 
 [metadata]
-content-hash = "b943752190e0f2fd7c02098731a06788df46a842b14d0abedfd1d3aea36eb380"
+content-hash = "52c546bc1125c43bd03200b0a782e0c5ec23fcea6ef2f97254480e4c8c520b62"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -846,9 +847,7 @@ pyyaml = [
     {file = "PyYAML-5.3.1-cp38-cp38-win_amd64.whl", hash = "sha256:95f71d2af0ff4227885f7a6605c37fd53d3a106fcab511b8860ecca9fcf400ee"},
     {file = "PyYAML-5.3.1.tar.gz", hash = "sha256:b8eac752c5e14d3eca0e6dd9199cd627518cb5ec06add0de9d32baeee6fe645d"},
 ]
-readability-lxml = [
-    {file = "readability-lxml-0.8.2.tar.gz", hash = "sha256:e0b026e060a7ee6f7bb705a6d8da54dfd97cc8a50001dc89eca9cea8e5af2961"},
-]
+readability-lxml = []
 regex = [
     {file = "regex-2020.7.14-cp27-cp27m-win32.whl", hash = "sha256:e46d13f38cfcbb79bfdb2964b0fe12561fe633caf964a77a5f8d4e45fe5d2ef7"},
     {file = "regex-2020.7.14-cp27-cp27m-win_amd64.whl", hash = "sha256:6961548bba529cac7c07af2fd4d527c5b91bb8fe18995fed6044ac22b3d14644"},
