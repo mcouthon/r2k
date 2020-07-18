@@ -71,7 +71,7 @@ pipx-install: $(DIST_PACKAGE)
 	$(PIPX_BIN) install $<
 
 build:
-	$(POETRY_BIN) build
+	$(POETRY_BIN) build --format=sdist
 
 setup: clean install build pipx-install
 

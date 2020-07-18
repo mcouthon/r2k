@@ -473,7 +473,7 @@ test = ["timeout-decorator"]
 [package.source]
 reference = ""
 type = "directory"
-url = "../python-readability"
+url = "python-readability"
 
 [[package]]
 category = "dev"
@@ -611,7 +611,7 @@ six = "*"
 docker = ["docker"]
 
 [metadata]
-content-hash = "52c546bc1125c43bd03200b0a782e0c5ec23fcea6ef2f97254480e4c8c520b62"
+content-hash = "ca20b1acb8c081bf99e9363104cbccc8a17da5d627b3b06f81ae412b818d96ef"
 python-versions = "^3.8"
 
 [metadata.files]
