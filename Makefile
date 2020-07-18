@@ -9,7 +9,6 @@ READABILITY_DIR				:= python-readability
 READABILITY_DIST_PATH		:= $(READABILITY_DIR)/dist
 READABILITY_PACKAGE_NAME 	:= readability-lxml
 
-
 R2K_PACKAGE_VERSION := $(shell $(POETRY_BIN) version | cut -d' ' -f2)
 
 READABILITY_PACKAGE_VERSION := $(shell cd $(READABILITY_DIR); $(PYTHON_BIN) setup.py --version)
@@ -113,4 +112,4 @@ push:
 	git push
 
 .PHONY: publish
-publish: $(READABILITY_DIST_PACKAGE) $(SRC_FILES) build publish-to-pypi commit-bump-version push
+publish: $(SRC_FILES) bump-version build publish-to-pypi commit-bump-version push

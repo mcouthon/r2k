@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "r2k"
-version = "0.4.15"
+version = "0.4.17"
 description = "A tool that lets you periodically send articles received from an RSS feed to your Kindle"
 authors = ["Pavel Brodsky <mcouthon@gmail.com>"]
 license = "MIT"
@@ -39,6 +39,7 @@ orjson = "^2.6.6"
 chardet = "^3.0.4"
 lxml = "^4.5.2"
 cssselect = "^1.1.0"
+requests = "^2.24.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.2.0"
