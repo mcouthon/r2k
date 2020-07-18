@@ -83,7 +83,7 @@ $(READABILITY_DIST_PACKAGE):
 	cd $(READABILITY_DIR); $(PYTHON_BIN) setup.py sdist
 
 $(R2K_DIST_PACKAGE): $(READABILITY_DIST_PACKAGE)
-	$(POETRY_BIN) build --format=sdist
+	$(POETRY_BIN) build
 
 build: $(R2K_DIST_PACKAGE)
 
@@ -109,4 +109,4 @@ push:
 	git push
 
 .PHONY: publish
-publish: $(READABILITY_DIST_PACKAGE) $(SRC_FILES) bump-version build publish-to-pypi commit-bump-version push
+publish: $(READABILITY_DIST_PACKAGE) $(SRC_FILES) build publish-to-pypi commit-bump-version push
