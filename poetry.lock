@@ -456,6 +456,7 @@ version = "5.3.1"
 [[package]]
 category = "main"
 description = "fast html to text parser (article readability tool) with python3 support"
+develop = true
 name = "readability-lxml"
 optional = false
 python-versions = "*"
@@ -470,9 +471,10 @@ lxml = "*"
 test = ["timeout-decorator"]
 
 [package.source]
-reference = "5498950bf6c0683b3a56d2f18a052408dbb4897f"
-type = "git"
-url = "https://github.com/mcouthon/python-readability.git"
+reference = ""
+type = "directory"
+url = "../python-readability"
+
 [[package]]
 category = "dev"
 description = "Alternative regular expression module, to replace re."
@@ -609,7 +611,7 @@ six = "*"
 docker = ["docker"]
 
 [metadata]
-content-hash = "3717ef80fedefa217bf96c38ad829731400906d099eecb44072597944e0f5d34"
+content-hash = "52c546bc1125c43bd03200b0a782e0c5ec23fcea6ef2f97254480e4c8c520b62"
 python-versions = "^3.8"
 
 [metadata.files]

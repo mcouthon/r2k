@@ -26,8 +26,8 @@ pick = "^0.6.7"
 python-dateutil = "^2.8.1"
 orjson = "^2.6.6"
 
-# Installing from git as it includes some fixes necessary for sites like XKCD
-readability-lxml = { git = "https://github.com/mcouthon/python-readability.git" }
+# Installing from a git submodule as it includes some fixes necessary for sites like XKCD
+readability-lxml = { path = "../python-readability" }
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.2.0"
