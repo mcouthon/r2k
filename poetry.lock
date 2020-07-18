@@ -9,7 +9,6 @@ version = "1.4.4"
 [[package]]
 category = "dev"
 description = "Atomic file writes."
-marker = "sys_platform == \"win32\""
 name = "atomicwrites"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
@@ -99,7 +98,6 @@ version = "7.1.2"
 [[package]]
 category = "dev"
 description = "Cross-platform colored terminal text."
-marker = "sys_platform == \"win32\""
 name = "colorama"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -133,10 +131,7 @@ version = "4.2.2"
 requests = ">=2.14.2,<2.18.0 || >2.18.0"
 six = ">=1.4.0"
 websocket-client = ">=0.32.0"
-
-[package.dependencies.pypiwin32]
-python = ">=3.6"
-version = "223"
+pypiwin32 = {version = "223", markers = "sys_platform == \"win32\" and python_version >= \"3.6\""}
 
 [package.extras]
 ssh = ["paramiko (>=2.4.2)"]
@@ -175,6 +170,7 @@ pyflakes = ">=2.2.0,<2.3.0"
 reference = "a7be77f761a4c29121d6bb6f61c11902281f9105"
 type = "git"
 url = "https://gitlab.com/pycqa/flake8.git"
+
 [[package]]
 category = "dev"
 description = "File identification library for Python"
@@ -353,6 +349,7 @@ version = "2.6.0"
 reference = "6a56d22bfa7502ea1b391a6266cbd8d2963a3a1e"
 type = "git"
 url = "git@github.com:PyCQA/pycodestyle.git"
+
 [[package]]
 category = "dev"
 description = "Python docstring style checker"
@@ -383,7 +380,6 @@ version = "2.4.7"
 [[package]]
 category = "main"
 description = ""
-marker = "sys_platform == \"win32\" and python_version >= \"3.6\""
 name = "pypiwin32"
 optional = true
 python-versions = "*"
@@ -401,14 +397,14 @@ python-versions = ">=3.5"
 version = "5.4.3"
 
 [package.dependencies]
-atomicwrites = ">=1.0"
 attrs = ">=17.4.0"
-colorama = "*"
 more-itertools = ">=4.0.0"
 packaging = "*"
 pluggy = ">=0.12,<1.0"
 py = ">=1.5.0"
 wcwidth = "*"
+atomicwrites = {version = ">=1.0", markers = "sys_platform == \"win32\""}
+colorama = {version = "*", markers = "sys_platform == \"win32\""}
 
 [package.extras]
 checkqa-mypy = ["mypy (v0.761)"]
@@ -439,7 +435,6 @@ tokenize-rt = ">=3.2.0"
 [[package]]
 category = "main"
 description = "Python for Window Extensions"
-marker = "sys_platform == \"win32\" and python_version >= \"3.6\""
 name = "pywin32"
 optional = true
 python-versions = "*"
@@ -452,28 +447,6 @@ name = "pyyaml"
 optional = false
 python-versions = "*"
 version = "5.3.1"
-
-[[package]]
-category = "main"
-description = "fast html to text parser (article readability tool) with python3 support"
-develop = true
-name = "readability-lxml"
-optional = false
-python-versions = "*"
-version = "0.8.1"
-
-[package.dependencies]
-chardet = "*"
-cssselect = "*"
-lxml = "*"
-
-[package.extras]
-test = ["timeout-decorator"]
-
-[package.source]
-reference = ""
-type = "directory"
-url = "../python-readability"
 
 [[package]]
 category = "dev"
@@ -611,7 +584,7 @@ six = "*"
 docker = ["docker"]
 
 [metadata]
-content-hash = "52c546bc1125c43bd03200b0a782e0c5ec23fcea6ef2f97254480e4c8c520b62"
+content-hash = "c3c726308d9a79beeb4860add732186834c0eca9e3b56bd5f8649330e8ed3960"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -847,7 +820,6 @@ pyyaml = [
     {file = "PyYAML-5.3.1-cp38-cp38-win_amd64.whl", hash = "sha256:95f71d2af0ff4227885f7a6605c37fd53d3a106fcab511b8860ecca9fcf400ee"},
     {file = "PyYAML-5.3.1.tar.gz", hash = "sha256:b8eac752c5e14d3eca0e6dd9199cd627518cb5ec06add0de9d32baeee6fe645d"},
 ]
-readability-lxml = []
 regex = [
     {file = "regex-2020.7.14-cp27-cp27m-win32.whl", hash = "sha256:e46d13f38cfcbb79bfdb2964b0fe12561fe633caf964a77a5f8d4e45fe5d2ef7"},
     {file = "regex-2020.7.14-cp27-cp27m-win_amd64.whl", hash = "sha256:6961548bba529cac7c07af2fd4d527c5b91bb8fe18995fed6044ac22b3d14644"},
