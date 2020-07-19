@@ -15,6 +15,10 @@ packages = [
     { include = "readability", from = "python-readability" },
 ]
 
+include = [
+    "templates"
+]
+
 [tool.poetry.scripts]
 r2k = "r2k.cli:main"
 
