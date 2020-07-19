@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "r2k"
-version = "0.4.20"
+version = "0.4.22"
 description = "A tool that lets you periodically send articles received from an RSS feed to your Kindle"
 authors = ["Pavel Brodsky <mcouthon@gmail.com>"]
 license = "MIT"
@@ -16,7 +16,7 @@ packages = [
 ]
 
 include = [
-    "templates"
+    "templates/**/*"
 ]
 
 [tool.poetry.scripts]
@@ -35,6 +35,7 @@ beautifulsoup4 = "^4.9.0"
 pick = "^0.6.7"
 python-dateutil = "^2.8.1"
 orjson = "^2.6.6"
+requests = "^2.24.0"
 
 # These 3 are required by readability-lxml (which we're getting from the submodule).
 # The convoluted installation is due to the fact that one can't publish git dependencies in PYPI
@@ -43,7 +44,6 @@ orjson = "^2.6.6"
 chardet = "^3.0.4"
 lxml = "^4.5.2"
 cssselect = "^1.1.0"
-requests = "^2.24.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.2.0"
