@@ -1,4 +1,4 @@
-from dataclasses import Field, asdict, dataclass, field, fields
+from dataclasses import asdict, dataclass, field, fields
 from typing import Any, List, Optional
 
 import yaml
@@ -67,9 +67,9 @@ class Config:
 
     @classmethod
     def fields(cls) -> List[str]:
-        """Return a tuple with all the publicly exposed fields of the Config class"""
+        """Return a list with all the publicly exposed fields of the Config class"""
         # Ignoring mypy typing validation here, as for some reason it assumes that f.type is always Field, but it isn't
-        return [f.name for f in fields(cls) if isinstance(f.type, Field) and f.type.repr]  # type: ignore
+        return [f.name for f in fields(cls) if issubclass(f.type, (str, Parser)) and not f.name.startswith("_")]
 
 
 config = Config(feeds={}, kindle_address="", password="", send_from="")

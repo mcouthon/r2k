@@ -25,6 +25,7 @@ from r2k.feeds import Article, Feed
 )
 def kindle_send(feed_title: str) -> None:
     """Send updates from one or all feeds."""
+    validate_parser()
     logger.info(f"[Parsing articles with the `{config.parser}` parser]\n")
     if feed_title:
         send_articles_for_feed(feed_title)
@@ -32,6 +33,21 @@ def kindle_send(feed_title: str) -> None:
         logger.notice("Sending articles from all feeds...\n")
         for feed_title in config.feeds:
             send_articles_for_feed(feed_title)
+
+
+def validate_parser() -> None:
+    """Run various validations for the different parsers"""
+    parser = Parser(config.parser)
+    if parser == Parser.MERCURY:
+        try:
+            import docker  # noqa
+        except ModuleNotFoundError:
+            logger.error(
+                "The `docker` module is not installed, but is required to use the `mercury` parser\n"
+                "Consider either switching to a different parser (by running `r2k config set -k parser --force`)\n"
+                "Or install the optional `docker` library by running `pip install 'r2k[docker]'`"
+            )
+            sys.exit(1)
 
 
 def send_articles_for_feed(feed_title: str) -> None:

@@ -18,8 +18,6 @@ from r2k.unicode import normalize_str, strip_common_unicode_chars
 
 from . import images
 from .base_parser import ParserBase
-from .mercury_parser import MercuryParser
-from .readability_parser import ReadabilityParser
 
 META_INF = "META-INF"
 OEBPS = "OEBPS"
@@ -250,10 +248,16 @@ class EPUB:
 
     @staticmethod
     def _get_parser_class() -> Type[ParserBase]:
+        """Importing the classes here to avoid issues with optional packages (e.g. docker)"""
         parser_type = Parser(config.parser)
+
         if parser_type == Parser.MERCURY:
+            from .mercury_parser import MercuryParser
+
             return MercuryParser
         elif parser_type == Parser.READABILITY:
+            from .readability_parser import ReadabilityParser
+
             return ReadabilityParser
         else:
             raise ValueError(f"Parser must be one of: {Parser.__values__}")

@@ -12,7 +12,7 @@ class Prompt:
     kindle_address = dict(text="Please provide your free kindle address (e.g. my_kindle@kindle.com)")
     parser = dict(
         text="Please choose the parser you're going to use",
-        default=Parser.MERCURY.value,
+        default=Parser.READABILITY.value,
         type=click.Choice(Parser.__values__),
     )
 

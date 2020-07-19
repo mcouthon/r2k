@@ -170,7 +170,6 @@ pyflakes = ">=2.2.0,<2.3.0"
 reference = "a7be77f761a4c29121d6bb6f61c11902281f9105"
 type = "git"
 url = "https://gitlab.com/pycqa/flake8.git"
-
 [[package]]
 category = "dev"
 description = "File identification library for Python"
@@ -349,7 +348,6 @@ version = "2.6.0"
 reference = "6a56d22bfa7502ea1b391a6266cbd8d2963a3a1e"
 type = "git"
 url = "git@github.com:PyCQA/pycodestyle.git"
-
 [[package]]
 category = "dev"
 description = "Python docstring style checker"
@@ -584,7 +582,7 @@ six = "*"
 docker = ["docker"]
 
 [metadata]
-content-hash = "0790dc3f5aa412e775fa8de08572ffd76313c54e4ba36e5f6a98318f63b415a2"
+content-hash = "a97698cf45eb45a8fcc0902e7c93ab836fa569d9acbb88c4deae69a293f97c14"
 python-versions = "^3.8"
 
 [metadata.files]
