@@ -9,6 +9,7 @@ from .unicode import strip_common_unicode_chars
 
 
 def build_basic_message(title: str) -> EmailMessage:
+    """Create the most basic email message"""
     msg = EmailMessage()
     msg["Subject"] = title
     msg["To"] = config.send_to
@@ -48,8 +49,8 @@ def send_email_messages(msgs: List[EmailMessage]) -> int:
 def set_content(msg: EmailMessage, title: str, url: Optional[str], attachment_path: Optional[str]) -> None:
     """Either set the text content of the email message, or attach an attachment, based on the current parser"""
     if attachment_path:
-        # We are marking the attachment as HTML, although it's an epub, because kindle doesn't official accept
-        # EPUB files in emails, but unofficial it will convert the file with kindlegen and it'll work fine
+        # We are marking the attachment as HTML, although it's an epub, because kindle doesn't officially accept
+        # EPUB files in emails, but unofficially it will convert the file with kindlegen and it'll work fine
         # Reference: https://www.amazon.com/gp/sendtokindle/email
         filename = f"{title}.html"
         logger.debug(f"Setting attachment for {title}")
@@ -63,6 +64,7 @@ def set_content(msg: EmailMessage, title: str, url: Optional[str], attachment_pa
 
 
 def create_email_message(title: str, url: Optional[str], attachment_path: Optional[str]) -> EmailMessage:
+    """Generate an email message"""
     title = strip_common_unicode_chars(title)
     msg = build_basic_message(title)
     set_content(msg, title, url, attachment_path)
@@ -70,6 +72,7 @@ def create_email_message(title: str, url: Optional[str], attachment_path: Option
 
 
 def send_epub(title: str, epub_path: str) -> int:
+    """Send an epub book over email"""
     msg = create_email_message(title, None, epub_path)
     return send_email_messages([msg])
 

@@ -36,11 +36,12 @@ def get_new_config() -> Config:
 
 
 def validate_config_overwrite(path: str, force: bool) -> None:
+    """Make sure the --force flag is passed where applicable"""
     if os.path.exists(path):
         if force:
             logger.warning(f"Overwriting existing configuration file in `{path}`...")
         else:
-            logger.error(f"A file already exists in `{path}`.\n" f"Pass the --force flag to overwrite it.")
+            logger.error(f"A file already exists in `{path}`.\nPass the --force flag to overwrite it.")
             sys.exit(1)
 
 

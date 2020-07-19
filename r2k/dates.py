@@ -22,4 +22,5 @@ def get_pretty_date_str(date: Union[str, datetime], show_time: bool = False, sho
 
 
 def now() -> datetime:
+    """Convenience function for datetime.utcnow"""
     return datetime.utcnow()
