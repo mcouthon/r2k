@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "r2k"
-version = "0.5.3"
+version = "0.5.4"
 description = "A tool that lets you periodically send articles received from an RSS feed to your Kindle"
 authors = ["Pavel Brodsky <mcouthon@gmail.com>"]
 license = "MIT"
