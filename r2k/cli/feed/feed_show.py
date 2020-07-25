@@ -14,4 +14,4 @@ def feed_show() -> None:
         logger.info("Here are the existing feeds:")
         logger.secho(feeds, fg="white", bold=False)
     else:
-        logger.info("There are no feeds available.\n" "Add more by running `r2k feeds import/add`")
+        logger.info("There are no feeds available.\nAdd more by running `r2k feeds import/add`")

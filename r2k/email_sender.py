@@ -40,7 +40,7 @@ def send_email_messages(msgs: List[EmailMessage]) -> int:
             for msg in msgs:
                 if send_email_message(server, msg):
                     messages_sent += 1
-                    logger.notice("Email sent successfully!\n")
+                    logger.notice("Email sent successfully!")
     except smtplib.SMTPException as e:
         logger.error(f"Caught an exception while trying to send an email.\nError: {e}")
     return messages_sent

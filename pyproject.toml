@@ -44,6 +44,7 @@ requests = "^2.24.0"
 chardet = "^3.0.4"
 lxml = "^4.5.2"
 cssselect = "^1.1.0"
+arrow = "^0.15.8"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.2.0"

@@ -18,7 +18,7 @@ def config_set(key: str, force: bool) -> None:
         if force:
             logger.warning("Overriding an existing value...")
         else:
-            logger.error(f"A value already exists for `{key}`.\n" f"Pass the --force flag to overwrite it.")
+            logger.error(f"A value already exists for `{key}`.\nPass the --force flag to overwrite it.")
             sys.exit(1)
 
     value = Prompt.get(key)

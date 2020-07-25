@@ -1,4 +1,3 @@
-from datetime import datetime
 from os import listdir, makedirs, walk
 from os.path import join
 from shutil import copyfile, rmtree
@@ -8,6 +7,7 @@ from typing import Any, List, Optional, Type
 from uuid import uuid4
 from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile
 
+import arrow
 from bs4 import BeautifulSoup
 
 from r2k.cli import logger
@@ -144,7 +144,7 @@ class EPUB:
         self.id = normalize_str(self.title)
         self.uuid = uuid4()
         # The date must be in the ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
-        self.date = datetime.utcnow().strftime("%Y-%m-%d")
+        self.date = arrow.now().isoformat()
         self._dst_path = epub_path
 
     def prepare_epub_dirs(self) -> None:

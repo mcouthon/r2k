@@ -7,8 +7,20 @@ python-versions = "*"
 version = "1.4.4"
 
 [[package]]
+category = "main"
+description = "Better dates & times for Python"
+name = "arrow"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+version = "0.15.8"
+
+[package.dependencies]
+python-dateutil = "*"
+
+[[package]]
 category = "dev"
 description = "Atomic file writes."
+marker = "sys_platform == \"win32\""
 name = "atomicwrites"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
@@ -98,6 +110,7 @@ version = "7.1.2"
 [[package]]
 category = "dev"
 description = "Cross-platform colored terminal text."
+marker = "sys_platform == \"win32\""
 name = "colorama"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -131,7 +144,10 @@ version = "4.2.2"
 requests = ">=2.14.2,<2.18.0 || >2.18.0"
 six = ">=1.4.0"
 websocket-client = ">=0.32.0"
-pypiwin32 = {version = "223", markers = "sys_platform == \"win32\" and python_version >= \"3.6\""}
+
+[package.dependencies.pypiwin32]
+python = ">=3.6"
+version = "223"
 
 [package.extras]
 ssh = ["paramiko (>=2.4.2)"]
@@ -170,6 +186,7 @@ pyflakes = ">=2.2.0,<2.3.0"
 reference = "a7be77f761a4c29121d6bb6f61c11902281f9105"
 type = "git"
 url = "https://gitlab.com/pycqa/flake8.git"
+
 [[package]]
 category = "dev"
 description = "File identification library for Python"
@@ -348,6 +365,7 @@ version = "2.6.0"
 reference = "6a56d22bfa7502ea1b391a6266cbd8d2963a3a1e"
 type = "git"
 url = "git@github.com:PyCQA/pycodestyle.git"
+
 [[package]]
 category = "dev"
 description = "Python docstring style checker"
@@ -378,6 +396,7 @@ version = "2.4.7"
 [[package]]
 category = "main"
 description = ""
+marker = "sys_platform == \"win32\" and python_version >= \"3.6\""
 name = "pypiwin32"
 optional = true
 python-versions = "*"
@@ -395,14 +414,14 @@ python-versions = ">=3.5"
 version = "5.4.3"
 
 [package.dependencies]
+atomicwrites = ">=1.0"
 attrs = ">=17.4.0"
+colorama = "*"
 more-itertools = ">=4.0.0"
 packaging = "*"
 pluggy = ">=0.12,<1.0"
 py = ">=1.5.0"
 wcwidth = "*"
-atomicwrites = {version = ">=1.0", markers = "sys_platform == \"win32\""}
-colorama = {version = "*", markers = "sys_platform == \"win32\""}
 
 [package.extras]
 checkqa-mypy = ["mypy (v0.761)"]
@@ -433,6 +452,7 @@ tokenize-rt = ">=3.2.0"
 [[package]]
 category = "main"
 description = "Python for Window Extensions"
+marker = "sys_platform == \"win32\" and python_version >= \"3.6\""
 name = "pywin32"
 optional = true
 python-versions = "*"
@@ -582,13 +602,17 @@ six = "*"
 docker = ["docker"]
 
 [metadata]
-content-hash = "a97698cf45eb45a8fcc0902e7c93ab836fa569d9acbb88c4deae69a293f97c14"
+content-hash = "f5fa1195750ed5c44d05a6a5ca541b6a9fc60aaabaec38034b17c9f21d8c3da9"
 python-versions = "^3.8"
 
 [metadata.files]
 appdirs = [
     {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
     {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
+]
+arrow = [
+    {file = "arrow-0.15.8-py2.py3-none-any.whl", hash = "sha256:271b8e05174d48e50324ed0dc5d74796c839c7e579a4f21cf1a7394665f9e94f"},
+    {file = "arrow-0.15.8.tar.gz", hash = "sha256:edc31dc051db12c95da9bac0271cd1027b8e36912daf6d4580af53b23e62721a"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},

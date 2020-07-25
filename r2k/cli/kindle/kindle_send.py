@@ -1,8 +1,8 @@
 import os
 import sys
-from datetime import datetime
 from typing import List
 
+import arrow
 import click
 
 from r2k.cli import cli_utils, logger
@@ -52,13 +52,13 @@ def validate_parser() -> None:
 
 def send_articles_for_feed(feed_title: str) -> None:
     """Find all the new/unread articles for a certain feed and send them to the user's kindle"""
-    logger.notice(f"Now working on `{feed_title}`...\n")
+    logger.notice(f"\nNow working on `{feed_title}`...")
 
     local_feed = get_local_feed(feed_title)
     unread_articles = get_unread_articles_for_feed(local_feed)
     send_updates(unread_articles, feed_title)
 
-    local_feed["updated"] = datetime.now().astimezone()
+    local_feed["updated"] = arrow.utcnow()
     config.save()
 
 
@@ -87,7 +87,7 @@ def send_updates(unread_articles: List[Article], feed_title: str) -> None:
             successful_count = send_epub_books(unread_articles, feed_title)
 
         if successful_count:
-            logger.notice(f"\nSuccessfully sent {successful_count} articles from the `{feed_title}` feed!")
+            logger.notice(f"Successfully sent {successful_count} articles from the `{feed_title}` feed!")
         else:
             logger.error(f"Failed to send any articles to `{feed_title}`. See errors above")
     else:

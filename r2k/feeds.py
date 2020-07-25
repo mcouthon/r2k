@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 from typing import List, Optional
 
+import arrow
 import feedparser
 from pick import pick
 
@@ -10,14 +11,14 @@ from .dates import get_pretty_date_str, parse_date
 class Article(feedparser.FeedParserDict):
     """Represents a single article in a feed"""
 
-    def get_parsed_date(self: feedparser.FeedParserDict) -> datetime:
+    def get_parsed_date(self: feedparser.FeedParserDict) -> arrow.Arrow:
         """Return a datetime object parsed from the string date value"""
         raw_date = self.get_raw_date()
         return parse_date(raw_date)
 
     def get_raw_date(self: feedparser.FeedParserDict) -> str:
         """Return the raw string date as set up in the entry"""
-        default = str(datetime.utcnow() - timedelta(days=30))
+        default = str(arrow.now().shift(days=-30))
         return self.get("published") or self.get("updated") or default
 
     def get_str_date(self: feedparser.FeedParserDict) -> str:
@@ -47,12 +48,12 @@ class Feed(feedparser.FeedParserDict):
         _, index = pick(options, title)
         return index
 
-    def find_unread_articles_from_date(self, last_updated: datetime) -> List[Article]:
+    def find_unread_articles_from_date(self, last_updated: arrow.Arrow) -> List[Article]:
         """Find all the new articles since `last_updated`"""
         # Some fancy walrus operator fun, because why not?
         return [article for entry in self.entries if (article := Article(entry)).get_parsed_date() > last_updated]
 
-    def get_unread_articles(self, last_updated: Optional[datetime]) -> List[Article]:
+    def get_unread_articles(self, last_updated: Optional[arrow.Arrow]) -> List[Article]:
         """
         Return all the new articles
 

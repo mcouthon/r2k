@@ -1,8 +1,8 @@
 import click
 
-from .config import config
-from .feed import feed
-from .kindle import kindle
+from r2k.cli.config import config
+from r2k.cli.feed import feed
+from r2k.cli.kindle import kindle
 
 
 @click.group()

@@ -42,7 +42,7 @@ def validate_existing_feeds(title: str, config: Config, force: bool) -> None:
             logger.confirm(f"Going to overwrite the following feed: {title}")
         else:
             logger.error(
-                f"The following feed already exists: {title}\n" f"Pass the --force flag if you'd like to overwrite it"
+                f"The following feed already exists: {title}\nPass the --force flag if you'd like to overwrite it"
             )
             sys.exit(1)
 
