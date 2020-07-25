@@ -10,7 +10,6 @@ keywords = ["rss", "atom", "kindle", "reading"]
 readme = "README.md"
 
 packages = [
-    { include = "r2k" },
     # Bring the readability package in a git submodule
     { include = "readability", from = "python-readability" },
 ]
