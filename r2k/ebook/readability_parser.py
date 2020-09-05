@@ -30,4 +30,6 @@ class ReadabilityParser(ParserBase):
         """Download the article and parse it"""
         r = get(url, headers=HTML_HEADERS)
         doc = Document(r.text, url=url)
-        return {"content": doc.summary(html_partial=True)}
+        html = doc.summary(html_partial=True)
+        clean_html = self.fix_blockquotes(html)
+        return {"content": clean_html}

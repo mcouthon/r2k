@@ -115,6 +115,20 @@ page-break-inside: avoid;
 /*===Paragraph Elements===*/
 /* Margins are usually added on the top, left, and right, but not on the bottom to prevent certain eReaders not collapsing white space properly */
 
+/*==BLOCK QUOTE==*/
+blockquote
+{
+text-indent: 1.25em;
+margin: 1em 1.5em 0 1.5em;
+padding: 0.5em 1em;
+text-align: left;
+font-size: 0.9em;
+}
+
+blockquote p {
+  display: inline;
+}
+
 /*first-line indent paragraph for fiction*/
 p
 {
@@ -177,7 +191,6 @@ p.toctext2
 margin: 0 0 0 2.5em;
 text-indent: 0;
 }
-
 
 /*==LISTS==*/
 ul

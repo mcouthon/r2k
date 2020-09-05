@@ -174,7 +174,7 @@ class EPUB:
             self.render_opf()
 
             epub_path = self.compress_epub()
-            logger.notice("Successfully created an EPUB archive!")
+            logger.info("Successfully created an EPUB archive!")
             return epub_path
         finally:
             rmtree(self._dst_path)
