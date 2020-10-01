@@ -112,4 +112,4 @@ push:
 	git push
 
 .PHONY: publish
-publish: $(SRC_FILES) bump-version build publish-to-pypi commit-bump-version push
+publish: $(SRC_FILES) bump-version build publish-to-pypi commit-bump-version push clean
