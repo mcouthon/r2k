@@ -34,6 +34,8 @@ class ParserBase(ABC):
         """Mobi doesn't seem to deal well with <p> tags inside <blockquote> tags. So we replace <p> with <div>"""
         soup = BeautifulSoup(html, "html.parser")
         for quote in soup.find_all("blockquote"):
+            if not quote:
+                continue
             quote.p.wrap(soup.new_tag("div"))  # Wrap all <p> elements with <div>
             quote.p.unwrap()  # Unwrap removes the element and replaces it with its content
 
