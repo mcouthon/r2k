@@ -30,9 +30,10 @@ class Article(feedparser.FeedParserDict):
 class Feed(feedparser.FeedParserDict):
     """Represents a single, feedparser-parsed RSS feed"""
 
-    def __init__(self, feed_url: str):
+    def __init__(self, feed_url: str, feed_title: str):
         """Constructor"""
         super().__init__(feedparser.parse(feed_url))
+        self.title = feed_title
 
     def find_unread_articles_from_user(self) -> List[Article]:
         """Ask the user what was the last article they have already read, and return all the newer ones"""
@@ -44,7 +45,7 @@ class Feed(feedparser.FeedParserDict):
         articles = [Article(entry) for entry in self.entries]
         options = [f"{article.title} ({article.get_str_date()})" for article in articles]
         options.append("I haven't read any of these :(")
-        title = "Please choose the *last* article from this feed that you've already read"
+        title = f"Please choose the *last* article from `{self.title}` that you've already read"
         _, index = pick(options, title)
         return index
 

@@ -55,16 +55,16 @@ def send_articles_for_feed(feed_title: str) -> None:
     logger.notice(f"\nNow working on `{feed_title}`...")
 
     local_feed = get_local_feed(feed_title)
-    unread_articles = get_unread_articles_for_feed(local_feed)
+    unread_articles = get_unread_articles_for_feed(local_feed, feed_title)
     send_updates(unread_articles, feed_title)
 
     local_feed["updated"] = arrow.utcnow()
     config.save()
 
 
-def get_unread_articles_for_feed(local_feed: dict) -> List[Article]:
+def get_unread_articles_for_feed(local_feed: dict, feed_title: str) -> List[Article]:
     """Find the all new articles for a certain feed"""
-    rss_feed = Feed(local_feed["url"])
+    rss_feed = Feed(local_feed["url"], feed_title)
     last_updated = local_feed.get("updated")
     return rss_feed.get_unread_articles(last_updated)
 
