@@ -10,6 +10,7 @@ from r2k.config import config
 from r2k.constants import ARTICLE_EBOOK_LIMIT, Parser
 from r2k.dates import get_pretty_date_str, now
 from r2k.ebook.epub_builder import create_epub
+from r2k.ebook.single_article import SingleArticle
 from r2k.email_sender import send_epub, send_urls
 from r2k.feeds import Article, Feed
 
@@ -23,12 +24,17 @@ from r2k.feeds import Article, Feed
     required=False,
     help="Title of a (optional) feed. If not passed, updates for all feeds will be sent",
 )
-def kindle_send(feed_title: str) -> None:
-    """Send updates from one or all feeds."""
+@click.option(
+    "-u", "--url", type=str, required=False, help="URL of an article to send to the Kindle",
+)
+def kindle_send(feed_title: str, url: str) -> None:
+    """Send updates from one or all feeds (or a single article)."""
     validate_parser()
     logger.info(f"[Parsing articles with the `{config.parser}` parser]\n")
     if feed_title:
         send_articles_for_feed(feed_title)
+    elif url:
+        send_article_from_url(url)
     else:
         logger.notice("Sending articles from all feeds...\n")
         for feed_title in config.feeds:
@@ -48,6 +54,13 @@ def validate_parser() -> None:
                 "Or install the optional `docker` library by running `pip install 'r2k[docker]'`"
             )
             sys.exit(1)
+
+
+def send_article_from_url(url: str) -> None:
+    """Convert a single article using the parser, and send it to kindle as an Ebook"""
+    logger.notice("Parsing article...")
+    article = SingleArticle(url)
+    send_updates([article], article.title)
 
 
 def send_articles_for_feed(feed_title: str) -> None:
