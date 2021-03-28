@@ -39,4 +39,4 @@ class ParserBase(ABC):
             quote.p.wrap(soup.new_tag("div"))  # Wrap all <p> elements with <div>
             quote.p.unwrap()  # Unwrap removes the element and replaces it with its content
 
-        return soup.decode(pretty_print=True)
+        return soup.decode()
