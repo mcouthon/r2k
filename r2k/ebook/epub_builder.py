@@ -111,7 +111,7 @@ class EPUBArticle:
             image_path = join("..", IMAGES, image_name)
             img["src"] = image_path
 
-        return soup.decode(pretty_print=True)
+        return soup.decode()
 
     def download_image(self, url: str) -> str:
         """
