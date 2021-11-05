@@ -1,5 +1,5 @@
 from typing import Optional
-from urllib.parse import urljoin, urlparse
+from urllib.parse import unquote, urljoin, urlparse
 from uuid import uuid4
 
 import requests
@@ -24,7 +24,8 @@ def get_image_filename(url: str) -> str:
     """
     Get image name from its URL with a unique prefix to avoid collisions
     """
-    image_basename = url.split("/")[-1]
+    image_basename = unquote(url).split("/")[-1]
+    image_basename = image_basename[-150:]
     prefix = str(uuid4())[:8]
     # We start with img because XML IDs cannot start with numbers
     return f"img-{prefix}-{image_basename}"

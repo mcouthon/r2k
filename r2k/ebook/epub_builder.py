@@ -119,8 +119,6 @@ class EPUBArticle:
         """
         logger.debug(f"Downloading image {url}...")
         image_name = images.get_image_filename(url)
-        if len(image_name) > 150:
-            image_name = image_name[:150]
         image_path = join(self.images_path, image_name)
         images.download_image(url, image_path)
         return image_name
