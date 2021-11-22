@@ -20,13 +20,13 @@ class SingleArticle(Article):
         """Set the article's title"""
         titles = self._soup.find_all("title")
         if titles:
-            self.title = titles[0].get_text()
+            self.title = titles[0].get_text().strip()
         else:
-            self.title = self.link
+            self.title = self.link.strip()
 
     def set_author(self) -> None:
         """Set the article's author"""
         metas = self._soup.find_all("meta")
         for meta in metas:
             if meta.attrs.get("name") == "author":
-                self.author = meta.attrs.get("content")
+                self.author = meta.attrs.get("content").strip()
