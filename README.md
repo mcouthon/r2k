@@ -28,8 +28,6 @@ installations, and thus is the easiest to use. It is, however, a bit less precis
 1. Using the [PushToKindle](http://pushtokindle.com/) service. The service works by attaching an email 
 address that forwards cleaned up versions of URLs to your Kindle. It's free for a certain amount of articles,
 but you need to become their supporter afterward.
-1. Using a dockerized version of the [Mercury-Parser](https://github.com/postlight/mercury-parser). 
-This method requires Docker, but is marginally better than the `readability` approach.
  
 ## Usage
 
